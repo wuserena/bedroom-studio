@@ -1,0 +1,8 @@
+node_modules/
+artifacts/
+.DS_Store
+Photos1/
+reference/
+docs/superpowers/
+.env
+.env.*

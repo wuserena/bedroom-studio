@@ -1,0 +1,10 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import {mkdir} from 'node:fs/promises';
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/home/serena/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
+const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')console.log('CONSOLE',m.text())});
+await page.goto('http://localhost:4173/room-simulator.html');await page.waitForSelector('#loading',{state:'detached'});await page.waitForTimeout(1500);await mkdir('artifacts',{recursive:true});await page.screenshot({path:'artifacts/day-overview.png'});
+await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.waitForTimeout(700);await page.screenshot({path:'artifacts/day-interior.png'});
+await page.getByRole('button',{name:'☾ 夜晚',exact:true}).click();await page.waitForTimeout(700);await page.screenshot({path:'artifacts/night-interior.png'});
+await page.goto('http://localhost:4173/');await page.waitForSelector('#loading',{state:'detached'});assert.deepEqual(errors,[]);await browser.close();console.log('PASS: day/night rendering screenshots');

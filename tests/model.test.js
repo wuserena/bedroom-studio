@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {DEFAULT_ROOM as R,validPlacement,moveSwept,validateState,findPlacement} from '../src/model.js';
+const item=(v={})=>({id:'a',type:'nightstand',x:140,z:150,w:40,d:40,h:50,angle:0,...v});
+test('wall boundary rejects protrusion, permits a touching edge',()=>{assert.equal(validPlacement(item({x:20}),[],R).ok,true);assert.equal(validPlacement(item({x:19}),[],R).ok,false)});
+test('door recess is usable but a footprint cannot bridge its missing corner',()=>{assert.equal(validPlacement(item({x:0,z:295,w:30,d:30}),[],R).ok,true);assert.equal(validPlacement(item({x:0,z:250,w:30,d:30}),[],R).ok,false)});
+test('column and fixed cabinet block furniture',()=>{assert.equal(validPlacement(item({x:78,z:315}),[],R).ok,false);assert.equal(validPlacement(item({x:275,z:100}),[],R).ok,false)});
+test('other furniture blocks but selected item does not collide with itself',()=>{const a=item();assert.equal(validPlacement(a,[a],R).ok,true);assert.equal(validPlacement(a,[item({id:'b'})],R).ok,false)});
+test('rotation checks actual rotated footprint',()=>{assert.equal(validPlacement(item({x:27,w:40,d:100,angle:0}),[],R).ok,true);assert.equal(validPlacement(item({x:27,w:40,d:100,angle:90}),[],R).ok,false)});
+test('height follows low ceiling if any footprint crosses the step',()=>{assert.equal(validPlacement(item({z:55,h:230}),[],R).ok,true);assert.equal(validPlacement(item({z:120,h:230}),[],R).ok,false)});
+test('fast movement cannot tunnel through another object',()=>{const a=item({x:50,z:150,w:20,d:20});const b=item({id:'b',x:120,z:150,w:20,d:20});const p=moveSwept(a,210,150,[a,b],R);assert.ok(p.x<=100);assert.ok(p.x>=99);assert.equal(p.blocked,true)});
+test('find placement reports a full room rather than overlap',()=>{assert.equal(findPlacement(item({w:500,d:500}),[],R),null)});
+test('import rejects overlapping objects, duplicates, unknown types and nonfinite dimensions',()=>{for(const items of [[item(),item({id:'b'})],[item(),item({x:40})],[item({type:'oops'})],[item({w:NaN})]])assert.throws(()=>validateState({version:1,room:R,items}));});
+test('room resizing revalidates furniture and invalid window measurements',()=>{assert.throws(()=>validateState({version:1,room:{...R,width:240},items:[item({x:230})]}));assert.throws(()=>validateState({version:1,room:{...R,windowWidth:999},items:[]}));});
+test('valid import returns normalized state independent of input',()=>{const raw={version:1,room:{...R},items:[item()]};const state=validateState(raw);raw.items[0].x=0;assert.equal(state.items[0].x,140)});
+test('prototype names are not furniture types',()=>{for(const type of ['constructor','__proto__','toString'])assert.throws(()=>validateState({version:1,room:R,items:[item({type})]}))});
+test('extreme angles cannot produce NaN footprints',()=>{assert.equal(validPlacement(item({angle:1e308}),[],R).ok,false)});

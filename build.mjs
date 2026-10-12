@@ -1,0 +1,5 @@
+import {build} from 'esbuild';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+const result=await build({entryPoints:['src/app.js'],bundle:true,format:'iife',minify:true,write:false,target:['es2020'],legalComments:'inline'});
+const css=await readFile('src/style.css','utf8');let html=await readFile('index.html','utf8');html=html.replace(/<script type="importmap">[\s\S]*?<\/script>/,'');html=html.replace('<link rel="stylesheet" href="src/style.css">',`<style>${css}</style>`).replace('<script type="module" src="src/app.js"></script>',()=>`<script>${result.outputFiles[0].text.replaceAll('</script','<\\/script')}</script>`);
+const license=await readFile('node_modules/three/LICENSE','utf8');html=html.replace('</head>',`<!-- Three.js license\n${license}\n--></head>`);await writeFile('THIRD_PARTY_NOTICES.txt',`Three.js\n${license}`);await writeFile('room-simulator.html',html);await mkdir('dist',{recursive:true});await writeFile('dist/index.html',html);console.log(`Built offline HTML (${Math.round(Buffer.byteLength(html)/1024)} KB)`);
