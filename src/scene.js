@@ -8,6 +8,7 @@ import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js'
 import {RectAreaLightUniformsLib} from 'three/addons/lights/RectAreaLightUniformsLib.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {CATALOG} from './model.js';
+import {createCabinet} from './cabinet.js';
 import {fitFurniture} from './furniture-fit.js';
 
 const M=.01;
@@ -20,7 +21,7 @@ function skyline(night=false){const c=document.createElement('canvas');c.width=1
 
 export function createScene(container,callbacks){
  let dirty=true;RectAreaLightUniformsLib.init();
- const scene=new THREE.Scene();scene.background=new THREE.Color('#e5e7e5');const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;container.appendChild(renderer.domElement);renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','可拖曳家具的 3D 房間');
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#e5e7e5');const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;container.appendChild(renderer.domElement);renderer.domElement.addEventListener('webglcontextrestored',()=>{dirty=true;});renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','可拖曳家具的 3D 房間');
  const pmrem=new THREE.PMREMGenerator(renderer);const env=new RoomEnvironment();scene.environment=pmrem.fromScene(env,.05).texture;scene.environmentIntensity=.2;env.dispose();pmrem.dispose();
  const perspective=new THREE.PerspectiveCamera(48,1,.04,60);const ortho=new THREE.OrthographicCamera(-3,3,3,-3,.01,50);let camera=perspective;let controls=new OrbitControls(camera,renderer.domElement);controls.addEventListener('change',()=>dirty=true);controls.enableDamping=true;controls.dampingFactor=.1;controls.maxPolarAngle=Math.PI*.49;controls.minDistance=.5;controls.maxDistance=13;controls.target.set(1.35,.75,1.6);
  const composer=new EffectComposer(renderer);composer.renderTarget1.samples=4;composer.renderTarget2.samples=4;const renderPass=new RenderPass(scene,camera);composer.addPass(renderPass);const ao=new SSAOPass(scene,perspective,1,1,16);ao.kernelRadius=.14;ao.minDistance=.0005;ao.maxDistance=.08;composer.addPass(ao);composer.addPass(new OutputPass());
@@ -35,12 +36,10 @@ export function createScene(container,callbacks){
  function windowUnit(parent,width,height,sill){const group=new THREE.Group();parent.add(group);const y=sill+height/2;box(group,0,y,1,width,height,2,mats.glass);const bg=new THREE.MeshBasicMaterial({map:mode==='day'?dayTex:nightTex,color:mode==='day'?'#ffffff':'#9aa8b8'});const p=box(group,0,y,-6,width,height,1,bg);p.castShadow=false;p.receiveShadow=false;windowScreens.push(bg);
  for(const x of [-width/2,width/2])box(group,x,y,0,3,height+5,7,mats.metal);for(const yy of [sill,sill+height])box(group,0,yy,0,width+5,3,7,mats.metal);const split=sill+height*.69;box(group,0,split,0,width,6,7,mats.metal);for(const x of [-width/6,width/6])box(group,x,y,2,2.8,height,4,mats.metal);
  const grille=mat('#68736f',{metalness:.55,roughness:.5});for(let x=-width/2+8;x<width/2;x+=18)box(group,x,y,-3,1.1,height,1.1,grille);for(let yy=sill+10;yy<sill+height;yy+=25)box(group,0,yy,-3,width,1.2,1.2,grille);if(width>150)for(const center of [-width/3,width/3])for(let i=0;i<5;i++){const a=Math.PI*i/4;line(group,[[center,split-15,-3],[center+30*Math.cos(a),split-15+30*Math.sin(a),-3]],'#65706b');}box(group,0,sill-2,3,width+8,3,14,mats.wall);return group;}
- function shelving(r){const g=new THREE.Group();roomRoot.add(g);const depth=r.cabinetDepth,xc=r.width-depth/2,D=333;g.scale.y=r.lowHeight/222;g.scale.z=r.depth/333;box(g,r.width-1,53,52,2,102,105,mats.wood);box(g,r.width-1,180,(D+208)/2,2,80,D-208,mats.wood);box(g,xc,4,D/2,depth,8,D,mats.woodDark);
- // Low shelves beside the window, low cupboard at the door, upper shelves and the diagonal face.
- for(const z of [1,105,D-1])box(g,xc,53,z,depth,102,2.2,mats.wood);for(const y of [9,40,72,103])box(g,xc,y,52,depth,2.2,105,mats.wood);
- box(g,xc,43,(D+145)/2,depth,82,D-145,mats.wood);for(let z=153;z<D;z+=44)box(g,r.width-depth-.2,39,z,1,65,.5,mats.woodDark);box(g,xc,86,(D+145)/2,depth+1,3,D-145,mats.wood);
- for(const y of [140,173,205,220])box(g,xc,y,(D+208)/2,depth,2.4,D-208,mats.wood);for(const z of [208,D-1])box(g,xc,181,z,depth,80,2,mats.wood);
- const shape=new THREE.Shape();shape.moveTo(92,9);shape.lineTo(144,9);shape.lineTo(251,220);shape.lineTo(196,220);shape.closePath();const geo=new THREE.ShapeGeometry(shape);const count=geo.attributes.position.count;for(let i=0;i<count;i++){const z=geo.attributes.position.getX(i),y=geo.attributes.position.getY(i);geo.attributes.position.setXYZ(i,r.width-depth-1,y,z);}geo.computeVertexNormals();const material=mats.wood.clone();material.side=THREE.DoubleSide;const face=new THREE.Mesh(geo,material);face.castShadow=true;face.receiveShadow=true;g.add(face);
+ function shelving(r){
+ const beam=mats.wood.clone();beam.map=mats.wood.map.clone();beam.map.center.set(.5,.5);beam.map.rotation=Math.PI/2;
+ roomRoot.add(createCabinet(r,{...mats,beam}));
+ const g=new THREE.Group();roomRoot.add(g);g.scale.y=r.lowHeight/222;g.scale.z=r.depth/333;
  // AC unit between small window and diagonal joinery.
  box(g,r.width-9,184,137,19,42,54,mats.white,1);for(let y=170;y<199;y+=2)box(g,r.width-19,y,130,.7,.6,31,mats.metal);box(g,r.width-19,186,157,1,28,6,mats.metal);box(g,r.width-20,169,155,1,3,5,mats.white);
  }
