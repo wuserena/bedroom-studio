@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile} from 'node:fs/promises';
 import {PROPOSALS} from '../src/proposals.js';
 // Applies the milk-tea proposal to the saved room, swaps one layer, undoes it, and keeps six shots for the visual review:
-// day and night (mood lamps only), each from the overview, the interior turned toward the bed head, and lying in bed.
+// day and night (night: ceiling lights and floor lamp off, mood lamps only), each from the overview, the interior turned toward the bed head, and lying in bed.
 const base=process.env.BASE_URL||'http://localhost:4173',p=PROPOSALS[0];
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/home/serena/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
 const page=await browser.newPage({viewport:{width:1440,height:1000},deviceScaleFactor:1});const errors=[];page.on('pageerror',e=>errors.push(e.message));
@@ -28,7 +28,7 @@ await page.getByRole('button',{name:'復原',exact:false}).click();await eventua
 await page.getByLabel('主簾',{exact:true}).focus();await page.getByLabel('主簾',{exact:true}).selectOption('ringblomma');await eventually(state=>assert.equal(state.decor.window.main.product,'ringblomma'));assert.match(await page.locator('#softPanel').innerText(),/目前沒有遮光層/);await eventually(()=>{});assert.equal(await page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'主簾');
 await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(state.decor,p.decor));
 for(const [light,label]of [['day','☀ 白天'],['night','☾ 夜晚']]){
- await page.getByRole('button',{name:label,exact:true}).click();if(light==='night')await page.locator('#ceilingLight').uncheck();
+ await page.getByRole('button',{name:label,exact:true}).click();if(light==='night'){await page.locator('#ceilingLight').uncheck();await page.getByRole('button',{name:'選取IKEA ISJAKT 立燈',exact:true}).click();await page.locator('#uplightOn').uncheck();await page.locator('#readingLightOn').uncheck();await eventually(state=>{const l=state.items.find(a=>a.type==='isjakt');assert.equal(l.uplightOn,false);assert.equal(l.readingLightOn,false)});await page.locator('#deselect').click()}
  await page.getByRole('button',{name:'立體全景',exact:true}).click();await settle();await page.screenshot({path:`artifacts/milktea-${light}-overview.png`});
  await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/milktea-${light}-interior.png`});
  await page.getByRole('button',{name:'床上',exact:true}).click();await settle();assert.equal(await page.getByRole('button',{name:'床上',exact:true}).getAttribute('aria-pressed'),'true');await page.screenshot({path:`artifacts/milktea-${light}-bed.png`});

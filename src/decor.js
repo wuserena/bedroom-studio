@@ -1,6 +1,6 @@
 // Room-level styling: floor finish, two-layer window dressing, cushions and vase bouquets. Pure data and geometry, no THREE.
 export const FLOORS=Object.freeze({tile:{name:'現況磁磚'},oak:{name:'橡木紋木地板'}});
-// layer 'sheer' hangs nearest the room and filters daylight; layer 'main' is the curtain or blind that gives privacy or darkness.
+// layer 'sheer' filters daylight and hangs nearer the glass; layer 'main' is the curtain or blind for privacy or darkness and hangs on the room side (a main blind sits against the glass with the sheer in front of it).
 export const WINDOW_PRODUCTS=Object.freeze({none:{name:'不裝',kind:'none'},
  matilda:{name:'IKEA MATILDA 白色紗簾',layer:'sheer',kind:'drape',color:'#f4f2ec',sheer:true,note:'2 件裝 145 × 250 cm，透光；需改短'},
  hallebracka:{name:'IKEA HÄLLEBRÄCKA 淺米色紗簾',layer:'sheer',kind:'drape',color:'#ece2d2',sheer:true,note:'2 件裝 145 × 250 cm，透光；需改短'},
