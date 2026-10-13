@@ -14,6 +14,8 @@ const eventually=async check=>{for(let i=0;;i++){try{return check(await read())}
 const types=state=>state.items.map(a=>a.type).sort();
 try{
 await page.goto(base+'/room-simulator.html');await page.waitForSelector('#loading',{state:'detached'});await mkdir('artifacts',{recursive:true});
+// With no furniture yet there is no bed to lie in: the view is refused and the button stays unpressed.
+await page.getByRole('button',{name:'床上',exact:true}).click();assert.match(await page.locator('#toast').innerText(),/請先加入一張床/);assert.notEqual(await page.getByRole('button',{name:'床上',exact:true}).getAttribute('aria-pressed'),'true');
 await page.locator('#importFile').setInputFiles({name:'layout.json',mimeType:'application/json',buffer:await readFile(new URL('./fixtures/current-layout.json',import.meta.url))});await settle();
 const before=await read();
 await page.getByRole('button',{name:`套用提案：${p.name}`,exact:true}).click();
@@ -23,13 +25,13 @@ assert.equal(await page.getByLabel('紗簾',{exact:true}).inputValue(),'hallebra
 // Swap one layer on its own: the bedside lamp becomes a TÄRNABY, then undo brings the DEJSA back.
 await page.getByLabel('更換IKEA DEJSA 桌燈',{exact:true}).selectOption('tarnaby');await eventually(state=>{assert.ok(types(state).includes('tarnaby'));assert.equal(types(state).includes('dejsa'),false)});
 await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(types(state),types(applied)));
-await page.getByLabel('主簾',{exact:true}).selectOption('ringblomma');await eventually(state=>assert.equal(state.decor.window.main.product,'ringblomma'));assert.match(await page.locator('#softPanel').innerText(),/目前沒有遮光層/);
+await page.getByLabel('主簾',{exact:true}).focus();await page.getByLabel('主簾',{exact:true}).selectOption('ringblomma');await eventually(state=>assert.equal(state.decor.window.main.product,'ringblomma'));assert.match(await page.locator('#softPanel').innerText(),/目前沒有遮光層/);await eventually(()=>{});assert.equal(await page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'主簾');
 await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(state.decor,p.decor));
 for(const [light,label]of [['day','☀ 白天'],['night','☾ 夜晚']]){
  await page.getByRole('button',{name:label,exact:true}).click();if(light==='night')await page.locator('#ceilingLight').uncheck();
  await page.getByRole('button',{name:'立體全景',exact:true}).click();await settle();await page.screenshot({path:`artifacts/milktea-${light}-overview.png`});
  await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/milktea-${light}-interior.png`});
- await page.getByRole('button',{name:'床上',exact:true}).click();await settle();await page.screenshot({path:`artifacts/milktea-${light}-bed.png`});
+ await page.getByRole('button',{name:'床上',exact:true}).click();await settle();assert.equal(await page.getByRole('button',{name:'床上',exact:true}).getAttribute('aria-pressed'),'true');await page.screenshot({path:`artifacts/milktea-${light}-bed.png`});
 }
 assert.deepEqual(errors,[]);console.log('PASS: milk tea applied, one layer swapped and undone, six screenshots in artifacts/');
 }finally{await browser.close()}
