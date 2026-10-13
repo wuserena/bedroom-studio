@@ -22,6 +22,10 @@ await page.getByRole('button',{name:`套用提案：${p.name}`,exact:true}).clic
 const applied=await eventually(state=>{assert.deepEqual(state.decor,p.decor);assert.equal(state.items.length,before.items.length+p.accents.length);return state});
 const bed=applied.items.find(a=>a.type==='nordli');assert.deepEqual(bed.cushions,p.bedding.cushions);assert.equal(bed.throwOn,false);assert.equal(await page.locator('#softThrow').isChecked(),false);
 assert.equal(await page.getByLabel('紗簾',{exact:true}).inputValue(),'hallebracka');assert.equal(await page.getByLabel('主簾',{exact:true}).inputValue(),'kalamondin');
+// The doughnut lamp can be laid flat from the inspector and stood back up; the shots keep it standing.
+const doughnut=state=>state.items.find(a=>a.type==='varmblixt');assert.equal(doughnut(applied).supportId,'cab:counter');
+await page.getByRole('button',{name:'選取IKEA VARMBLIXT 橘色玻璃燈',exact:true}).click();await page.locator('#lieToggle').click();await eventually(state=>assert.deepEqual([doughnut(state).lying,doughnut(state).h],[true,11]));
+await page.locator('#lieToggle').click();await eventually(state=>assert.deepEqual([doughnut(state).lying,doughnut(state).h],[false,30]));await page.locator('#deselect').click();
 // Swap one layer on its own: the bedside lamp becomes a TÄRNABY, then undo brings the DEJSA back.
 await page.getByLabel('更換IKEA DEJSA 桌燈',{exact:true}).selectOption('tarnaby');await eventually(state=>{assert.ok(types(state).includes('tarnaby'));assert.equal(types(state).includes('dejsa'),false)});
 await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(types(state),types(applied)));
