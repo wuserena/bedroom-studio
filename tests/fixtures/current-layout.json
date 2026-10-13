@@ -1,0 +1,8 @@
+{"version":1,"layoutRevision":2,"room":{"width":333,"depth":293,"recess":20,"recessLength":76,"doorWidth":76,"columnWidth":44,"columnDepth":31.5,"lowHeight":222,"highHeight":235,"highDepth":115,"cabinetDepth":32,"windowWidth":223,"windowHeight":108,"windowSill":93,"smallWindowWidth":73,"smallWindowHeight":88,"smallWindowSill":123},"items":[
+{"id":"bed","type":"nordli","x":200,"z":233,"w":120,"d":202,"h":30,"angle":90,"color":"#f4f3ef","beddingSide":1,"duvetColor":"#9a9d9e","pillowColor":"#f4f2ee"},
+{"id":"desk","type":"mittzon","x":30.005385582519175,"z":89.57384627342935,"w":120,"d":60,"h":75,"angle":90,"color":"#d7c39e"},
+{"id":"5925b90d-ffda-45e7-96d8-cb78103e0cc8","type":"kangaroo","x":97.19346301917626,"z":87.77077820533147,"w":74,"d":74,"h":109,"angle":270,"color":"#e7e6e1"},
+{"id":"8c554da2-b027-46ba-91f0-3635124e970e","type":"plumeriaRug","x":220.86578562050488,"z":80.70737765415333,"w":120,"d":160,"h":1.8,"angle":270,"color":"#c9b9a4"},
+{"id":"9a4cd569-90ef-483e-86b3-8eac37b13744","type":"isjakt","x":14.858111046263488,"z":14.824889551258579,"w":24,"d":24,"h":180,"angle":285,"color":"#b9b9b3","uplightOn":true,"readingLightOn":true},
+{"id":"549f06b6-d036-409c-8fa0-af5da0a7e055","type":"yogiboPod","x":244.48299299045874,"z":50.12386521635437,"w":100,"d":100,"h":80,"angle":0,"color":"#bfc1bd"},
+{"id":"618945e8-8a50-42ad-a338-65da4e44e011","type":"gosigGolden","x":203.93562758334937,"z":264.0566936281511,"w":38,"d":70,"h":28,"angle":90,"color":"#c9a568","mountHeight":52,"supportId":"bed"}]}
