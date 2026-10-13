@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DEFAULT_ROOM as R,validPlacement,moveSwept,validateState,findPlacement} from '../src/model.js';
+import {DEFAULT_ROOM as R,CATALOG,validPlacement,moveSwept,validateState,findPlacement} from '../src/model.js';
 const item=(v={})=>({id:'a',type:'nightstand',x:140,z:150,w:40,d:40,h:50,angle:0,...v});
 test('wall boundary rejects protrusion, permits a touching edge',()=>{assert.equal(validPlacement(item({x:20}),[],R).ok,true);assert.equal(validPlacement(item({x:19}),[],R).ok,false)});
 test('side extension cannot be used before the entrance corner',()=>{assert.equal(validPlacement(item({x:0,z:250,w:30,d:30}),[],R).ok,false);assert.equal(validPlacement(item({x:0,z:295,w:30,d:30}),[],R).ok,false)});
@@ -15,3 +15,4 @@ test('room resizing revalidates furniture and invalid window measurements',()=>{
 test('valid import returns normalized state independent of input',()=>{const raw={version:1,room:{...R},items:[item()]};const state=validateState(raw);raw.items[0].x=0;assert.equal(state.items[0].x,140)});
 test('prototype names are not furniture types',()=>{for(const type of ['constructor','__proto__','toString'])assert.throws(()=>validateState({version:1,room:R,items:[item({type})]}))});
 test('extreme angles cannot produce NaN footprints',()=>{assert.equal(validPlacement(item({angle:1e308}),[],R).ok,false)});
+test('NORDLI keeps the official IKEA dimensions and bedding options',()=>{const c=CATALOG.nordli;assert.deepEqual([c.w,c.d,c.h],[120,202,30]);assert.equal(c.fixedSize,true);const raw={version:1,layoutRevision:2,room:{...R},items:[{id:'n',type:'nordli',x:150,z:145,w:120,d:202,h:30,angle:0,beddingSide:1,duvetColor:'#8d988e',pillowColor:'#f2eee5'}]};const state=validateState(raw);assert.equal(state.items[0].beddingSide,1);assert.equal(state.items[0].duvetColor,'#8d988e');assert.equal(state.items[0].pillowColor,'#f2eee5');assert.throws(()=>validateState({...raw,items:[{...raw.items[0],w:121}]}),/固定尺寸/)});
