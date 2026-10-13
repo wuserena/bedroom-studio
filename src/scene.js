@@ -51,23 +51,21 @@ export function createScene(container,callbacks){
  const front=new THREE.Group();roomRoot.add(front);wallGroups.push({group:front,side:'front'});const wl=(r.width-r.windowWidth)/2,wr=wl+r.windowWidth;box(front,wl/2,r.highHeight/2,-6,wl,r.highHeight,12,mats.wall);box(front,(wr+r.width)/2,r.highHeight/2,-6,r.width-wr,r.highHeight,12,mats.wall);box(front,r.width/2,r.windowSill/2,-6,r.windowWidth,r.windowSill,12,mats.wall);const above=r.highHeight-r.windowSill-r.windowHeight;box(front,r.width/2,r.highHeight-above/2,-6,r.windowWidth,above,12,mats.wall);const win=windowUnit(front,r.windowWidth,r.windowHeight,r.windowSill);win.position.x=r.width/2;
  const right=new THREE.Group();roomRoot.add(right);wallGroups.push({group:right,side:'right'});const swz=r.highDepth*.5,half=r.smallWindowWidth/2;const segments=[[0,swz-half],[swz+half,r.depth]];for(const [a,b]of segments)box(right,r.width+6,r.highHeight/2,(a+b)/2,12,r.highHeight,b-a,mats.wall);box(right,r.width+6,r.smallWindowSill/2,swz,12,r.smallWindowSill,r.smallWindowWidth,mats.wall);let ah=r.highHeight-r.smallWindowSill-r.smallWindowHeight;box(right,r.width+6,r.highHeight-ah/2,swz,12,ah,r.smallWindowWidth,mats.wall);const small=windowUnit(right,r.smallWindowWidth,r.smallWindowHeight,r.smallWindowSill);small.rotation.y=-Math.PI/2;small.position.set(r.width,0,swz);
  const left=new THREE.Group();roomRoot.add(left);wallGroups.push({group:left,side:'left'});
- box(left,-6,r.lowHeight/2,(r.depth-r.recessLength)/2,12,r.lowHeight,r.depth-r.recessLength,mats.wall);
- box(left,-6,(r.lowHeight+r.highHeight)/2,r.highDepth/2,12,r.highHeight-r.lowHeight,r.highDepth,mats.wall);
  const {door:entry,column}=entrance,doorHeight=Math.min(204,r.lowHeight-6);
- box(left,-r.recess/2,r.lowHeight/2,r.depth-r.recessLength-6,r.recess,r.lowHeight,12,mats.wall);
- const margin=r.recessLength-r.doorWidth;
- if(margin>0)box(left,-r.recess-6,r.lowHeight/2,r.depth-r.recessLength+margin/2,12,r.lowHeight,margin,mats.wall);
- box(left,-r.recess-6,(r.lowHeight+doorHeight)/2,entry.z,12,r.lowHeight-doorHeight,r.doorWidth,mats.wall);
+ box(left,-6,r.lowHeight/2,entry.z/2,12,r.lowHeight,entry.z,mats.wall);
+ box(left,-6,(r.lowHeight+r.highHeight)/2,r.highDepth/2,12,r.highHeight-r.lowHeight,r.highDepth,mats.wall);
  const rear=new THREE.Group();roomRoot.add(rear);wallGroups.push({group:rear,side:'rear'});
- box(rear,(r.width-r.recess)/2,r.lowHeight/2,r.depth+6,r.width+r.recess,r.lowHeight,12,mats.wall);
+ box(rear,(r.doorWidth+r.width)/2,r.lowHeight/2,r.depth+6,r.width-r.doorWidth,r.lowHeight,12,mats.wall);
+ box(rear,r.doorWidth+6,r.lowHeight/2,r.depth+r.recess/2,12,r.lowHeight,r.recess,mats.wall);
+ box(rear,entry.x,(r.lowHeight+doorHeight)/2,entry.z+6,r.doorWidth,r.lowHeight-doorHeight,12,mats.wall);
  const frame=new THREE.Group();roomRoot.add(frame);
- for(const z of [r.depth-r.doorWidth,r.depth])box(frame,entry.x+1,doorHeight/2,z,6,doorHeight,4,mats.metal);
- box(frame,entry.x+1,doorHeight,entry.z,6,4,r.doorWidth+4,mats.metal);
- // Show the leaf opening inward from the room-side hinge, as in the supplied plan.
- const door=new THREE.Group();door.name='entrance-door';door.position.set(entry.x,0,entry.hingeZ);door.rotation.y=Math.PI/4;door.scale.y=doorHeight/204;roomRoot.add(door);
- box(door,0,100,r.doorWidth/2,4,200,r.doorWidth-5,mat('#d9d9ce'));
- for(const y of [57,143])box(door,2,y,r.doorWidth/2,2,65,r.doorWidth-19,mats.white,.7);
- const handle=cyl(door,5,96,r.doorWidth-10,2,3,mats.chrome);handle.rotation.z=Math.PI/2;
+ for(const x of [0,r.doorWidth])box(frame,x,doorHeight/2,entry.z-1,4,doorHeight,6,mats.metal);
+ box(frame,entry.x,doorHeight,entry.z-1,r.doorWidth+4,4,6,mats.metal);
+ // Closed leaf runs along the rear wall; opening moves it toward the large window.
+ const door=new THREE.Group();door.name='entrance-door';door.position.set(entry.hingeX,0,entry.hingeZ);door.rotation.y=Math.PI/4;door.scale.y=doorHeight/204;roomRoot.add(door);
+ box(door,r.doorWidth/2,100,0,r.doorWidth-5,200,4,mat('#d9d9ce'));
+ for(const y of [57,143])box(door,r.doorWidth/2,y,-2,r.doorWidth-19,65,2,mats.white,.7);
+ const handle=cyl(door,r.doorWidth-10,96,-5,2,3,mats.chrome);handle.rotation.x=Math.PI/2;
  const sector=new THREE.Shape(entrance.swing.polygon.map(p=>new THREE.Vector2(p.x,-p.z)));
  const sweepGeometry=new THREE.ShapeGeometry(sector);sweepGeometry.rotateX(-Math.PI/2);
  const sweep=new THREE.Mesh(sweepGeometry,new THREE.MeshBasicMaterial({color:'#b59b68',transparent:true,opacity:.12,depthWrite:false}));sweep.position.y=.3;roomRoot.add(sweep);
@@ -77,15 +75,15 @@ export function createScene(container,callbacks){
  box(roomRoot,column.x,4,column.z-column.d/2+1,column.w,8,2,mats.base);
  for(const x of [column.x-column.w/2+1,column.x+column.w/2-1])box(roomRoot,x,4,column.z,2,8,column.d,mats.base);
  box(roomRoot,column.x,4,column.z+column.d/2-1,column.w,8,2,mats.base);
- box(front,r.width/2,4,1,r.width,8,2,mats.base);box(left,1,4,(r.depth-r.recessLength)/2,2,8,r.depth-r.recessLength,mats.base);
- box(left,-r.recess/2,4,r.depth-r.recessLength+1,r.recess,8,2,mats.base);
- box(rear,(r.width-r.recess)/2,4,r.depth-1,r.width+r.recess,8,2,mats.base);
+ box(front,r.width/2,4,1,r.width,8,2,mats.base);box(left,1,4,entry.z/2,2,8,entry.z,mats.base);
+ box(rear,(r.doorWidth+r.width)/2,4,r.depth-1,r.width-r.doorWidth,8,2,mats.base);
+ box(rear,r.doorWidth-1,4,r.depth+r.recess/2,2,8,r.recess,mats.base);
  line(roomRoot,[...entrance.floor,entrance.floor[0]].map(([x,z])=>[x,.4,z]),'#a9b0a4');
- ceiling=new THREE.Group();roomRoot.add(ceiling);box(ceiling,r.width/2,r.highHeight+4,r.highDepth/2,r.width,8,r.highDepth,mats.wall);box(ceiling,r.width/2,r.lowHeight+4,(r.depth+r.highDepth)/2,r.width,8,r.depth-r.highDepth,mats.wall);box(ceiling,-r.recess/2,r.lowHeight+4,r.depth-r.recessLength/2,r.recess,8,r.recessLength,mats.wall);box(ceiling,r.width/2,(r.highHeight+r.lowHeight)/2,r.highDepth,r.width,r.highHeight-r.lowHeight,4,mats.wall);
+ ceiling=new THREE.Group();roomRoot.add(ceiling);box(ceiling,r.width/2,r.highHeight+4,r.highDepth/2,r.width,8,r.highDepth,mats.wall);box(ceiling,r.width/2,r.lowHeight+4,(r.depth+r.highDepth)/2,r.width,8,r.depth-r.highDepth,mats.wall);box(ceiling,entry.x,r.lowHeight+4,r.depth+r.recess/2,r.doorWidth,8,r.recess,mats.wall);box(ceiling,r.width/2,(r.highHeight+r.lowHeight)/2,r.highDepth,r.width,r.highHeight-r.lowHeight,4,mats.wall);
  for(const x of [r.width*.2,r.width*.5,r.width*.8]){cyl(ceiling,x,r.highHeight-1,r.highDepth/2,6.7,2,mats.chrome);const bulbMat=mat('#fff7e2',{emissive:'#ffe7b8',emissiveIntensity:1});cyl(ceiling,x,r.highHeight-2.2,r.highDepth/2,5,1,bulbMat);bulbs.push(bulbMat);const spot=new THREE.SpotLight('#fff1d5',22,5,Math.PI*.44,.7,2);spot.position.set(x*M,(r.highHeight-4)*M,r.highDepth/2*M);spot.target.position.set(x*M,0,r.highDepth/2*M);spot.castShadow=true;spot.shadow.mapSize.set(1024,1024);spot.shadow.bias=-.0001;spot.shadow.normalBias=.008;lights.add(spot,spot.target);downlights.push(spot);}
  shelving(r);
  // Visible wall sockets provide a scale reference.
- for(const [x,z]of [[45,1],[r.width-55,1],[35,r.depth-1]]){box(roomRoot,x,28,z,10,6,1,mats.white,.4);for(const xx of [-2,2])box(roomRoot,x+xx,28,z+(z<5?1:-1),.6,1.7,.4,mats.metal);}
+ for(const [x,z]of [[45,1],[r.width-55,1],[r.doorWidth+20,r.depth-1]]){box(roomRoot,x,28,z,10,6,1,mats.white,.4);for(const xx of [-2,2])box(roomRoot,x+xx,28,z+(z<5?1:-1),.6,1.7,.4,mats.metal);}
  const hemi=new THREE.HemisphereLight('#dcebf2','#b4a087',mode==='day'?1.35:.13);hemi.name='ambient';lights.add(hemi);const sun=new THREE.DirectionalLight('#fff2d9',3);sun.name='sun';sun.position.set(-1,4,-3);sun.target.position.set(1.8,0,2.4);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-4;sun.shadow.camera.right=4;sun.shadow.camera.top=4;sun.shadow.camera.bottom=-4;sun.shadow.camera.near=.1;sun.shadow.camera.far=15;sun.shadow.normalBias=.01;sun.shadow.bias=-.00015;lights.add(sun,sun.target);
  // Window fill models the broad source of daylight.
  const fill=new THREE.RectAreaLight('#e6f0f6',mode==='day'?5:.1,r.windowWidth*M,r.windowHeight*M);fill.name='windowFill';fill.position.set(r.width*M/2,(r.windowSill+r.windowHeight/2)*M,.015);fill.lookAt(r.width*M/2,1,2);lights.add(fill);
@@ -105,7 +103,7 @@ export function createScene(container,callbacks){
  function setMode(m,on=topOn){dirty=true;mode=m;topOn=on;const night=m==='night';scene.background.set(night?'#222c33':'#e5e7e5');scene.environmentIntensity=night?.12:.22;renderer.toneMappingExposure=night?1.05:1;const ambient=lights.getObjectByName('ambient'),sun=lights.getObjectByName('sun'),fill=lights.getObjectByName('windowFill');if(ambient)ambient.intensity=night?.48:1.1;if(sun)sun.intensity=night?0:2.6;if(fill)fill.intensity=night?.06:4;downlights.forEach(l=>l.intensity=on?(night?10:5):0);bulbs.forEach(m=>m.emissiveIntensity=on?2:0);windowScreens.forEach(m=>{m.map=night?nightTex:dayTex;m.color.set(night?'#8796ad':'#ffffff');m.needsUpdate=true});}
  function updateVisibility(){if(!room)return;ceiling.visible=(view==='interior'||view==='entry');wallGroups.forEach(({group,side})=>group.visible=(view==='interior'||view==='entry')||(side!=='left'&&side!=='rear'));dimensionGroup.visible=(view!=='interior'&&view!=='entry');}
  function setView(v){dirty=true;view=v;controls.dispose();camera=v==='top'?ortho:perspective;renderPass.camera=camera;ao.enabled=v!=='top';controls=new OrbitControls(camera,renderer.domElement);controls.addEventListener('change',()=>dirty=true);controls.enableDamping=true;controls.dampingFactor=.1;controls.minDistance=.5;controls.maxDistance=14;controls.maxPolarAngle=Math.PI*.495;const cx=room.width*M/2,cz=room.depth*M/2;
- if(v==='top'){camera.position.set(cx,9,cz+.0001);controls.target.set(cx,0,cz);controls.enableRotate=false;camera.up.set(0,0,-1);ortho.zoom=1;}else if(v==='entry'){perspective.fov=64;perspective.updateProjectionMatrix();const e=entranceLayout(room);camera.position.set(Math.min(125,room.width-room.cabinetDepth-25)*M,1.4,(room.depth-Math.max(110,room.columnDepth+30))*M);controls.target.set(0,1.02,(room.depth-room.doorWidth/2)*M);controls.enablePan=false;}else if(v==='interior'){perspective.fov=66;perspective.updateProjectionMatrix();camera.position.set(.8,1.48,(room.depth-room.columnDepth-18)*M);controls.target.set(cx,1.03,.6);controls.minDistance=.05;controls.maxDistance=5;controls.enablePan=false;controls.rotateSpeed=.45;}else{perspective.fov=48;perspective.updateProjectionMatrix();camera.position.set(-3.25,4.8,6.4);controls.target.set(cx,.65,cz);}
+ if(v==='top'){camera.position.set(cx,9,cz+.0001);controls.target.set(cx,0,cz);controls.enableRotate=false;camera.up.set(0,0,-1);ortho.zoom=1;}else if(v==='entry'){perspective.fov=64;perspective.updateProjectionMatrix();const e=entranceLayout(room);camera.position.set(Math.max(room.columnDepth+45,95)*M,1.4,(e.door.z-room.recessLength-130)*M);controls.target.set(e.door.x*M,1.02,(e.door.z-25)*M);controls.enablePan=false;}else if(v==='interior'){perspective.fov=66;perspective.updateProjectionMatrix();camera.position.set(.8,1.48,(room.depth-room.columnDepth-18)*M);controls.target.set(cx,1.03,.6);controls.minDistance=.05;controls.maxDistance=5;controls.enablePan=false;controls.rotateSpeed=.45;}else{perspective.fov=48;perspective.updateProjectionMatrix();camera.position.set(-3.25,4.8,6.4);controls.target.set(cx,.65,cz);}
  controls.update();controls.enabled=v!=='interior'&&v!=='entry';updateVisibility();resize();}
  function resize(){dirty=true;const w=container.clientWidth,h=container.clientHeight;renderer.setSize(w,h);perspective.aspect=w/h;perspective.updateProjectionMatrix();const span=Math.max((room?.depth||333)+(room?.recess||20),room?.width||293)*M/2+.8;ortho.left=-span*w/h;ortho.right=span*w/h;ortho.top=span;ortho.bottom=-span;ortho.updateProjectionMatrix();composer.setSize(w,h);}
  new ResizeObserver(resize).observe(container);const ray=new THREE.Raycaster(),pointer=new THREE.Vector2(),plane=new THREE.Plane(new THREE.Vector3(0,1,0),0);let dragging=null,pointerStart=null,lookDrag=null;

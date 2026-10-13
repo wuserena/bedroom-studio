@@ -4,9 +4,9 @@ import {DEFAULT_ROOM as R,validPlacement,moveSwept,validateState,findPlacement} 
 const item=(v={})=>({id:'a',type:'nightstand',x:140,z:150,w:40,d:40,h:50,angle:0,...v});
 test('wall boundary rejects protrusion, permits a touching edge',()=>{assert.equal(validPlacement(item({x:20}),[],R).ok,true);assert.equal(validPlacement(item({x:19}),[],R).ok,false)});
 test('side extension cannot be used before the entrance corner',()=>{assert.equal(validPlacement(item({x:0,z:250,w:30,d:30}),[],R).ok,false);assert.equal(validPlacement(item({x:0,z:295,w:30,d:30}),[],R).ok,false)});
-test('column and fixed cabinet block furniture',()=>{assert.equal(validPlacement(item({x:15,z:235}),[],R).ok,false);assert.equal(validPlacement(item({x:275,z:100}),[],R).ok,false)});
+test('column and fixed cabinet block furniture',()=>{assert.equal(validPlacement(item({x:15,z:215}),[],R).ok,false);assert.equal(validPlacement(item({x:315,z:100}),[],R).ok,false)});
 test('other furniture blocks but selected item does not collide with itself',()=>{const a=item();assert.equal(validPlacement(a,[a],R).ok,true);assert.equal(validPlacement(a,[item({id:'b'})],R).ok,false)});
-test('rotation checks actual rotated footprint',()=>{assert.equal(validPlacement(item({x:27,w:40,d:100,angle:0}),[],R).ok,true);assert.equal(validPlacement(item({x:27,w:40,d:100,angle:90}),[],R).ok,false)});
+test('rotation checks actual rotated footprint',()=>{assert.equal(validPlacement(item({x:27,z:100,w:40,d:100,angle:0}),[],R).ok,true);assert.equal(validPlacement(item({x:27,z:100,w:40,d:100,angle:90}),[],R).ok,false)});
 test('height follows low ceiling if any footprint crosses the step',()=>{assert.equal(validPlacement(item({z:55,h:230}),[],R).ok,true);assert.equal(validPlacement(item({z:120,h:230}),[],R).ok,false)});
 test('fast movement cannot tunnel through another object',()=>{const a=item({x:50,z:150,w:20,d:20});const b=item({id:'b',x:120,z:150,w:20,d:20});const p=moveSwept(a,210,150,[a,b],R);assert.ok(p.x<=100);assert.ok(p.x>=99);assert.equal(p.blocked,true)});
 test('find placement reports a full room rather than overlap',()=>{assert.equal(findPlacement(item({w:500,d:500}),[],R),null)});
