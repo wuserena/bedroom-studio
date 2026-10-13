@@ -28,8 +28,8 @@ await page.getByRole('button',{name:'選取IKEA VARMBLIXT 橘色玻璃燈',exact
 await page.locator('#lieToggle').click();await eventually(state=>assert.deepEqual([doughnut(state).lying,doughnut(state).h],[false,30]));await page.locator('#deselect').click();
 // A curtain layer can be recoloured on its own; undo returns the product colour.
 await page.getByLabel('主簾顏色',{exact:true}).fill('#e8d5c4');await eventually(state=>assert.equal(state.decor.window.main.color,'#e8d5c4'));await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(state.decor,p.decor));
-// Swap one layer on its own: the bedside lamp becomes a TÄRNABY, then undo brings the DEJSA back.
-await page.getByLabel('更換IKEA DEJSA 桌燈',{exact:true}).selectOption('tarnaby');await eventually(state=>{assert.ok(types(state).includes('tarnaby'));assert.equal(types(state).includes('dejsa'),false)});
+// Swap one layer on its own: the bedside doughnut lamp becomes a TÄRNABY, then undo brings it back.
+await page.getByLabel('更換IKEA VARMBLIXT 橘色玻璃燈',{exact:true}).selectOption('tarnaby');await eventually(state=>{assert.ok(types(state).includes('tarnaby'));assert.equal(types(state).includes('varmblixt'),false)});
 await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(types(state),types(applied)));
 await page.getByLabel('主簾',{exact:true}).focus();await page.getByLabel('主簾',{exact:true}).selectOption('ringblomma');await eventually(state=>assert.equal(state.decor.window.main.product,'ringblomma'));assert.match(await page.locator('#softPanel').innerText(),/目前沒有遮光層/);await eventually(()=>{});assert.equal(await page.evaluate(()=>document.activeElement.getAttribute('aria-label')),'主簾');
 await page.getByRole('button',{name:'復原',exact:false}).click();await eventually(state=>assert.deepEqual(state.decor,p.decor));

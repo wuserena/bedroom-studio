@@ -143,7 +143,7 @@ export function createScene(container,callbacks){
  else if(a.type==='sofa'){B(0,20,0,w,35,d,textile,5);B(0,h*.72,-d*.38,w,h*.55,d*.24,textile,5);for(const x of [-w/2+9,w/2-9])B(x,h*.48,0,18,h*.7,d,textile,5);for(const x of [-w*.22,w*.22])B(x,42,5,w*.41,12,d*.7,textile,5);}
  else if(c.lamp)buildMoodLamp(g,a);
  else if(c.vase)buildVase(g,a);
- else if(a.type==='fejka'||a.type==='aptitlig'||a.type==='fladis')buildTableProp(g,a,weave);
+ else if(c.tabletop&&!c.lamp&&!c.vase)buildTableProp(g,a,weave);
  else if(a.type==='rodalm'||a.type==='kaffetrad')buildWallPiece(g,a,wood);
  else {B(0,h/2,0,w,h,d,timber,1);for(const y of [h*.28,h*.72]){B(0,y,d/2+.2,w-3,h*.4,1,timber,.6);B(0,y,d/2+1.2,12,1,1,dark,.3);}}
  // ISJAKT keeps its full 50 cm visual reach while collision only uses the 24 cm base.

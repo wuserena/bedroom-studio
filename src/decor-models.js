@@ -42,6 +42,10 @@ export function buildTableProp(g,a,weave){
  else if(a.type==='aptitlig'){const bamboo=std(a.color,{roughness:.55});cyl(g,14,1.4,bamboo,.7);const rim=add(g,new THREE.TorusGeometry(13.4,.6,10,56),bamboo,0,2,0);rim.rotation.x=Math.PI/2;
   // A glass and a phone show what the tray is for; they are not products.
   const glass=add(g,new THREE.CylinderGeometry(3.3,2.9,9,28,1,true),clear('#eef4f3',.28),-5,6,-3);glass.castShadow=false;const phone=add(g,new THREE.BoxGeometry(7.2,.8,14.8),std('#3a3c3d',{roughness:.35}),5,1.8,2);phone.rotation.y=.25;}
+ else if(a.type==='kvarnvik'||a.type==='smarra'){const {w,d,h}=a,lid=a.type==='smarra'?2.2:4,body=std(a.color,{roughness:a.type==='smarra'?.5:.9});add(g,new THREE.BoxGeometry(w-.8,h-lid,d-.8),body,0,(h-lid)/2,0);add(g,new THREE.BoxGeometry(w,lid,d),body,0,h-lid/2,0);
+  // A label holder on the paper box and a finger hole on the bamboo one tell the two apart at a glance.
+  if(a.type==='kvarnvik')add(g,new THREE.BoxGeometry(7,3,.3),nickel(),0,h*.42,d/2-.2).castShadow=false;else{const hole=add(g,new THREE.CylinderGeometry(1.6,1.6,.4,20),std('#6f5a3c'),0,h-lid-4,d/2-.25);hole.rotation.x=Math.PI/2;hole.castShadow=false;}}
+ else if(a.type==='bekna'){const {w,d,h}=a,basket=std(a.color,{roughness:1,bumpMap:weave,bumpScale:.9});add(g,new THREE.BoxGeometry(w,h,d),basket,0,h/2,0);add(g,new THREE.BoxGeometry(w-2.4,.4,d-2.4),std('#5e4b33',{roughness:1}),0,h-.1,0).castShadow=false;for(const sx of [-1,1])add(g,new THREE.BoxGeometry(.4,2.4,8),std('#5e4b33'),sx*(w/2+.05),h-4,0).castShadow=false;}
  else if(a.type==='fladis'){const basket=add(g,turned([[7.5,0],[10.4,4],[12.5,11.5],[10.8,15],[10.2,23],[10.6,32]]),std(a.color,{roughness:1,bumpMap:weave,bumpScale:.9,side:THREE.DoubleSide}));basket.receiveShadow=true;cyl(g,9.9,.5,std('#eee7d8',{roughness:1}),26);}
 }
 // One shared picture texture for every RÖDALM frame, so rebuilding items never leaks a new GPU texture.
