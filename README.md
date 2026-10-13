@@ -45,9 +45,9 @@ GitHub Pages 由 `.github/workflows/pages.yml` 自動部署。每次推送到 `m
 
 尺寸圖分段有未閉合之處，使用者已同意先估算。層板沿包梁邊緣連接，冷氣下方為連續木作。木櫃分段、燈位、窗戶偏移、門高、磁磚約 60 cm 等細節依照片比例製作。房間大小修改時固定櫃依房間深與低天花板高度等比例調整，並非新的量測結果。
 
-材質、戶外背景及光線為即時 3D 近似重建，無法保證與照片或實物顏色完全一致，也不是精確日照分析或施工模型。配置前請現場複測。品牌家具尺寸取自 [IKEA NORDLI](https://www.ikea.com.tw/zh/products/beds/bed-frames/nordli-art-50349856)、[IKEA MITTZON](https://www.ikea.com.tw/zh/products/office-workspace/office-desks-and-tables/mittzon-spr-89525863)、[IKEA ISJAKT](https://www.ikea.com.tw/zh/products/luminaires/floor-lamps/isjakt-art-30459718)、[IKEA DYVLINGE](https://www.ikea.com.tw/zh/products/armchairs-footstool-and-sofa-tables/armchairs/dyvlinge-art-80581919)、[IKEA SKÅDIS](https://www.ikea.com.tw/zh/products/wall-organisers/boards-and-wall-organisers/skadis-art-30320806)、[Backbone Kangaroo White](https://www.backbone.tw/products/kangaroo-white) 與 [Yogibo Pod](https://www.yogibo.tw/products/yogibo-pod) 官方商品頁；外觀與寢具是方便佈置的近似模型。
+材質、戶外背景及光線為即時 3D 近似重建，無法保證與照片或實物顏色完全一致，也不是精確日照分析或施工模型。配置前請現場複測。品牌家具尺寸取自 [IKEA NORDLI](https://www.ikea.com.tw/zh/products/beds/bed-frames/nordli-art-50349856)、[IKEA MITTZON](https://www.ikea.com.tw/zh/products/office-workspace/office-desks-and-tables/mittzon-spr-89525863)、[IKEA ISJAKT](https://www.ikea.com.tw/zh/products/luminaires/floor-lamps/isjakt-art-30459718)、[IKEA DYVLINGE](https://www.ikea.com.tw/zh/products/armchairs-footstool-and-sofa-tables/armchairs/dyvlinge-art-80581919)、[IKEA SKÅDIS](https://www.ikea.com.tw/zh/products/wall-organisers/boards-and-wall-organisers/skadis-art-30320806)、[Backbone Kangaroo White](https://www.backbone.tw/products/kangaroo-white)、[Yogibo Pod](https://www.yogibo.tw/products/yogibo-pod) 與 [MYUMYU Plumeria 地毯](https://tw.shp.ee/irKxieJE) 商品頁；外觀與寢具是方便佈置的近似模型。
 
-家具碰撞採完整旋轉外框，包含把手等細節；快速拖曳沿路檢查，不會跳過障礙。固定櫃按整段深度占用空間，不能把椅子塞入桌下或把物件堆疊。門片示意開啟 45°，家具碰撞保留完整 90° 開門扇形。
+家具碰撞採完整旋轉外框，包含把手等細節；快速拖曳沿路檢查，不會跳過障礙。固定櫃按整段深度占用空間，不能把椅子塞入桌下。地毯屬地面軟裝，允許家具疊放在上面。門片示意開啟 45°，家具碰撞保留完整 90° 開門扇形。
 
 ## 開發與驗證
 
