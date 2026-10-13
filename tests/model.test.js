@@ -4,7 +4,7 @@ import {DEFAULT_ROOM as R,validPlacement,moveSwept,validateState,findPlacement} 
 const item=(v={})=>({id:'a',type:'nightstand',x:140,z:150,w:40,d:40,h:50,angle:0,...v});
 test('wall boundary rejects protrusion, permits a touching edge',()=>{assert.equal(validPlacement(item({x:20}),[],R).ok,true);assert.equal(validPlacement(item({x:19}),[],R).ok,false)});
 test('side extension cannot be used before the entrance corner',()=>{assert.equal(validPlacement(item({x:0,z:250,w:30,d:30}),[],R).ok,false);assert.equal(validPlacement(item({x:0,z:295,w:30,d:30}),[],R).ok,false)});
-test('column and fixed cabinet block furniture',()=>{assert.equal(validPlacement(item({x:78,z:315}),[],R).ok,false);assert.equal(validPlacement(item({x:275,z:100}),[],R).ok,false)});
+test('column and fixed cabinet block furniture',()=>{assert.equal(validPlacement(item({x:15,z:235}),[],R).ok,false);assert.equal(validPlacement(item({x:275,z:100}),[],R).ok,false)});
 test('other furniture blocks but selected item does not collide with itself',()=>{const a=item();assert.equal(validPlacement(a,[a],R).ok,true);assert.equal(validPlacement(a,[item({id:'b'})],R).ok,false)});
 test('rotation checks actual rotated footprint',()=>{assert.equal(validPlacement(item({x:27,w:40,d:100,angle:0}),[],R).ok,true);assert.equal(validPlacement(item({x:27,w:40,d:100,angle:90}),[],R).ok,false)});
 test('height follows low ceiling if any footprint crosses the step',()=>{assert.equal(validPlacement(item({z:55,h:230}),[],R).ok,true);assert.equal(validPlacement(item({z:120,h:230}),[],R).ok,false)});

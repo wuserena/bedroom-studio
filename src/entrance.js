@@ -5,7 +5,7 @@ export function entranceLayout(r) {
   return {
     door:{x:hinge.x,z:r.depth-r.doorWidth/2,hingeZ:hinge.z,w:r.doorWidth},
     swing:{id:'door-swing',name:'開門預留區',polygon},
-    column:{id:'column',name:'柱子',x:r.doorWidth-r.recess+r.columnWidth/2,z:r.depth-r.columnDepth/2,w:r.columnWidth,d:r.columnDepth,angle:0},
+    column:{id:'column',name:'柱子',x:r.columnDepth/2,z:r.depth-r.recessLength-r.columnWidth/2,w:r.columnDepth,d:r.columnWidth,angle:0},
     floor:[[0,0],[r.width,0],[r.width,r.depth],[-r.recess,r.depth],[-r.recess,r.depth-r.recessLength],[0,r.depth-r.recessLength]]
   };
 }

@@ -74,8 +74,9 @@ export function createScene(container,callbacks){
  line(roomRoot,entrance.swing.polygon.slice(1).map(p=>[p.x,.5,p.z]),'#a48a57');
  box(roomRoot,column.x,r.lowHeight/2,column.z,column.w,r.lowHeight,column.d,mats.wall);
  line(roomRoot,[[-1,-1],[1,-1],[1,1],[-1,1],[-1,-1]].map(([x,z])=>[column.x+x*column.w/2,r.lowHeight+.1,column.z+z*column.d/2]),'#92978c');
- box(roomRoot,column.x,4,r.depth-column.d+1,column.w,8,2,mats.base);
+ box(roomRoot,column.x,4,column.z-column.d/2+1,column.w,8,2,mats.base);
  for(const x of [column.x-column.w/2+1,column.x+column.w/2-1])box(roomRoot,x,4,column.z,2,8,column.d,mats.base);
+ box(roomRoot,column.x,4,column.z+column.d/2-1,column.w,8,2,mats.base);
  box(front,r.width/2,4,1,r.width,8,2,mats.base);box(left,1,4,(r.depth-r.recessLength)/2,2,8,r.depth-r.recessLength,mats.base);
  box(left,-r.recess/2,4,r.depth-r.recessLength+1,r.recess,8,2,mats.base);
  box(rear,(r.width-r.recess)/2,4,r.depth-1,r.width+r.recess,8,2,mats.base);
