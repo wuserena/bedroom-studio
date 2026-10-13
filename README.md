@@ -13,10 +13,11 @@ GitHub Pages 由 `.github/workflows/pages.yml` 自動部署。每次推送到 `m
 - 左側選家具新增；在「立體全景」或「俯視配置」拖曳。
 - 選取家具後可修改寬、深、高、顏色，或每次旋轉 15°。
 - 「單人床」可選兩種款式：「預設」通用單人床，或 IKEA NORDLI 抽屜收納床（固定 120 × 202 × 30 cm，白色床架、側邊三抽）；NORDLI 可移動、旋轉、切換寢具方向，並分別更換棉被與枕頭顏色。
+- 新增 IKEA GOSIG GOLDEN 70 cm 黃金獵犬填充玩具；它屬於床上配件，加入時會放到現有床面，固定尺寸但可在床墊範圍內拖曳與旋轉。移動或旋轉床時會一併帶著娃娃，刪除床也會移除床上配件。
 - 「書桌」新增 IKEA MITTZON 橡木紋／白色款，固定桌面 120 × 60 cm；模型高度設定 75 cm，官網可組裝範圍為 65–85 cm。
 - 「椅子」新增 Backbone Kangaroo White 人體工學椅，碰撞外框採 74 × 74 × 109 cm。
 - 「椅子」也可選 IKEA DYVLINGE 旋轉休閒椅，固定 63 × 75 × 68 cm，提供官方橘色、黑色、米色與綠色四色。
-- 新增淺灰色 Yogibo Pod 懶骨頭，依官方尺寸圖採底面 91 × 91 cm、高 122 cm。
+- 新增淺灰色 Yogibo Pod 懶骨頭，採有人坐下後塌陷的使用狀態約 100 × 100 × 80 cm（官方未坐時約 91 × 91 × 122 cm）；舊配置會自動換成新尺寸。
 - 新增 IKEA ISJAKT 立燈，高 180 cm；碰撞只計算直徑 24 cm 的底座，因此閱讀燈臂可伸到桌面上方。上照燈與閱讀燈各有獨立開關，會以暖白光實際照亮牆面、天花板及桌面附近。
 - 新增白色 IKEA SKÅDIS 56 × 56 cm 洞洞板，預設離地 110 cm 並沿可用牆面移動；低於洞洞板的桌子可放在它下方。
 - 方向鍵移動 1 cm；Shift + 方向鍵移動 5 cm；R 旋轉；Delete 刪除；Ctrl / ⌘ Z 復原。
@@ -45,7 +46,7 @@ GitHub Pages 由 `.github/workflows/pages.yml` 自動部署。每次推送到 `m
 
 尺寸圖分段有未閉合之處，使用者已同意先估算。層板沿包梁邊緣連接，冷氣下方為連續木作。木櫃分段、燈位、窗戶偏移、門高、磁磚約 60 cm 等細節依照片比例製作。房間大小修改時固定櫃依房間深與低天花板高度等比例調整，並非新的量測結果。
 
-材質、戶外背景及光線為即時 3D 近似重建，無法保證與照片或實物顏色完全一致，也不是精確日照分析或施工模型。配置前請現場複測。品牌家具尺寸取自 [IKEA NORDLI](https://www.ikea.com.tw/zh/products/beds/bed-frames/nordli-art-50349856)、[IKEA MITTZON](https://www.ikea.com.tw/zh/products/office-workspace/office-desks-and-tables/mittzon-spr-89525863)、[IKEA ISJAKT](https://www.ikea.com.tw/zh/products/luminaires/floor-lamps/isjakt-art-30459718)、[IKEA DYVLINGE](https://www.ikea.com.tw/zh/products/armchairs-footstool-and-sofa-tables/armchairs/dyvlinge-art-80581919)、[IKEA SKÅDIS](https://www.ikea.com.tw/zh/products/wall-organisers/boards-and-wall-organisers/skadis-art-30320806)、[Backbone Kangaroo White](https://www.backbone.tw/products/kangaroo-white)、[Yogibo Pod](https://www.yogibo.tw/products/yogibo-pod) 與 [MYUMYU Plumeria 地毯](https://tw.shp.ee/irKxieJE) 商品頁；外觀與寢具是方便佈置的近似模型。
+材質、戶外背景及光線為即時 3D 近似重建，無法保證與照片或實物顏色完全一致，也不是精確日照分析或施工模型。配置前請現場複測。品牌家具尺寸取自 [IKEA NORDLI](https://www.ikea.com.tw/zh/products/beds/bed-frames/nordli-art-50349856)、[IKEA GOSIG GOLDEN](https://www.ikea.com.tw/zh/products/kids-toys/comfort-toys/gosig-golden-art-30169342)、[IKEA MITTZON](https://www.ikea.com.tw/zh/products/office-workspace/office-desks-and-tables/mittzon-spr-89525863)、[IKEA ISJAKT](https://www.ikea.com.tw/zh/products/luminaires/floor-lamps/isjakt-art-30459718)、[IKEA DYVLINGE](https://www.ikea.com.tw/zh/products/armchairs-footstool-and-sofa-tables/armchairs/dyvlinge-art-80581919)、[IKEA SKÅDIS](https://www.ikea.com.tw/zh/products/wall-organisers/boards-and-wall-organisers/skadis-art-30320806)、[Backbone Kangaroo White](https://www.backbone.tw/products/kangaroo-white)、[Yogibo Pod](https://www.yogibo.tw/products/yogibo-pod) 與 [MYUMYU Plumeria 地毯](https://tw.shp.ee/irKxieJE) 商品頁；外觀與寢具是方便佈置的近似模型。
 
 家具碰撞採完整旋轉外框，包含把手等細節；快速拖曳沿路檢查，不會跳過障礙。固定櫃按整段深度占用空間，不能把椅子塞入桌下。地毯屬地面軟裝，允許家具疊放在上面。門片示意開啟 45°，家具碰撞保留完整 90° 開門扇形。
 

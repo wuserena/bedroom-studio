@@ -30,13 +30,20 @@ export function pillowGeometry(w,h,d,{round=Math.min(w,h,d)/3,plump=.55,seed=0}=
   g.computeVertexNormals();return g;
 }
 
-// An unloaded Yogibo Pod: a gathered teardrop whose loose bead filling settles into a broad base.
-// Small three-lobed variations keep the stretch cover from reading as a rigid vase.
-export function podGeometry(w=91,h=122,d=91){
-  const profile=[[1.5,0],[28,1.5],[41,7],[45.5,18],[45,35],[42,55],[36,76],[27,96],[16,111],[6,120],[1.4,122]].map(([r,y])=>new THREE.Vector2(r,y)),g=new THREE.LatheGeometry(profile,72),p=g.attributes.position;
+// A Yogibo Pod as it looks in use: the bead filling has slumped into a wide base, the front is pressed
+// into a seat and the displaced filling rises behind it as a backrest. The seat faces +z.
+export function podGeometry(w=100,h=80,d=100){
+  const profile=[[1.5,0],[33,1.2],[45,6],[50,16],[49.5,28],[46,40],[40,50],[31,58],[20,63.5],[9,66.5],[.15,67.5]].map(([r,y])=>new THREE.Vector2(r,y)),rings=profile.length,segments=96,g=new THREE.LatheGeometry(profile,segments),p=g.attributes.position;
+  const smooth=(a,b,v)=>{const t=Math.min(1,Math.max(0,(v-a)/(b-a)));return t*t*(3-2*t)};
   for(let i=0;i<p.count;i++){
-    const x=p.getX(i),y=p.getY(i),z=p.getZ(i),angle=Math.atan2(z,x),t=y/122,soft=1+.018*Math.sin(angle*3+t*5)+.009*Math.sin(angle*5-t*7),front=1-.025*Math.max(0,Math.cos(angle))*Math.sin(Math.PI*t)**2;
-    p.setXYZ(i,x*soft,y+.55*Math.sin(angle*2+1.1)*Math.sin(Math.PI*t)**2,z*soft*front);
+    const x=p.getX(i),y=p.getY(i),z=p.getZ(i),angle=Math.atan2(z,x),t=y/67.5,upper=smooth(.25,1,t),
+      seat=Math.exp(-((x/27)**2+((z-13)/23)**2)),back=smooth(-2,-30,z)*Math.exp(-((x/40)**2)),
+      lobes=1+.022*Math.sin(angle*3+t*4)+.012*Math.sin(angle*7-t*6),squeeze=1+.07*seat*(1-upper),
+      crease=.9*Math.sin(angle*9+t*11)*Math.sin(Math.PI*t)*(1-seat);
+    p.setXYZ(i,x*lobes*squeeze,y-24*upper*seat+15*upper*back+crease*upper,z*lobes*squeeze-4*upper*back);
   }
-  g.computeBoundingBox();const b=g.boundingBox,size=new THREE.Vector3();b.getSize(size);g.scale(w/size.x,h/size.y,d/size.z);g.computeBoundingBox();g.translate(0,-g.boundingBox.min.y,0);g.computeVertexNormals();return g;
+  g.computeBoundingBox();const b=g.boundingBox,size=new THREE.Vector3();b.getSize(size);g.scale(w/size.x,h/size.y,d/size.z);g.computeBoundingBox();const c=g.boundingBox;g.translate(-(c.min.x+c.max.x)/2,-c.min.y,-(c.min.z+c.max.z)/2);g.computeVertexNormals();
+  // The lathe duplicates its first column; share normals there so no seam shows on the cover.
+  const n=g.attributes.normal,v=new THREE.Vector3(),u=new THREE.Vector3();for(let j=0;j<rings;j++){v.fromBufferAttribute(n,j).add(u.fromBufferAttribute(n,segments*rings+j)).normalize();n.setXYZ(j,v.x,v.y,v.z);n.setXYZ(segments*rings+j,v.x,v.y,v.z)}
+  return g;
 }
