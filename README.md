@@ -16,7 +16,7 @@ GitHub Pages 由 `.github/workflows/pages.yml` 自動部署。每次推送到 `m
 - 「書桌」新增 IKEA MITTZON 橡木紋／白色款，固定桌面 120 × 60 cm；模型高度設定 75 cm，官網可組裝範圍為 65–85 cm。
 - 「椅子」新增 Backbone Kangaroo White 人體工學椅，碰撞外框採 74 × 74 × 109 cm。
 - 「椅子」也可選 IKEA DYVLINGE 旋轉休閒椅，固定 63 × 75 × 68 cm，提供官方橘色、黑色、米色與綠色四色。
-- 新增淺灰色 Yogibo Pod 懶骨頭，固定尺寸 122 × 91 × 91 cm。
+- 新增淺灰色 Yogibo Pod 懶骨頭，依官方尺寸圖採底面 91 × 91 cm、高 122 cm。
 - 新增 IKEA ISJAKT 立燈，高 180 cm；碰撞只計算直徑 24 cm 的底座，因此閱讀燈臂可伸到桌面上方。上照燈與閱讀燈各有獨立開關，會以暖白光實際照亮牆面、天花板及桌面附近。
 - 新增白色 IKEA SKÅDIS 56 × 56 cm 洞洞板，預設離地 110 cm 並沿可用牆面移動；低於洞洞板的桌子可放在它下方。
 - 方向鍵移動 1 cm；Shift + 方向鍵移動 5 cm；R 旋轉；Delete 刪除；Ctrl / ⌘ Z 復原。

@@ -11,7 +11,7 @@ import {entranceLayout} from './entrance.js';
 import {CATALOG} from './model.js';
 import {createCabinet} from './cabinet.js';
 import {fitFurniture} from './furniture-fit.js';
-import {drapeGeometry,pillowGeometry} from './soft.js';
+import {drapeGeometry,pillowGeometry,podGeometry} from './soft.js';
 
 const M=.01;
 function texture(kind){const c=document.createElement('canvas');c.width=c.height=512;const g=c.getContext('2d');let seed=17;const rand=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
@@ -125,7 +125,7 @@ export function createScene(container,callbacks){
  }
  else if(a.type==='chair'){for(const x of [-w*.36,w*.36])for(const z of [-d*.34,d*.34])B(x,h*.25,z,3,h*.5,3,dark);B(0,h*.53,0,w,8,d,textile,4);B(0,h*.8,-d*.41,w,h*.4,7,textile,3);}
  else if(a.type==='wardrobe'){B(0,h/2,0,w,h,d,timber,1);for(const x of [-w*.25,w*.25]){B(x,h/2,d/2+.4,w/2-1,h-4,1.5,timber,.3);B(x+(x<0?w*.19:-w*.19),h*.48,d/2+1.7,1.1,16,1.5,dark,.4);}}
- else if(a.type==='yogiboPod'){const podMat=mat('#bfc1bd',{map:fabric,roughness:.98}),profile=[new THREE.Vector2(3,0),new THREE.Vector2(33,3),new THREE.Vector2(50,15),new THREE.Vector2(57,35),new THREE.Vector2(52,58),new THREE.Vector2(35,76),new THREE.Vector2(13,88),new THREE.Vector2(6,91)],pod=new THREE.Mesh(new THREE.LatheGeometry(profile,56),podMat);pod.scale.z=.75;pod.castShadow=pod.receiveShadow=true;g.add(pod);cyl(g,0,91,0,6,2,mat('#aeb0ac',{map:fabric,roughness:.98}));}
+ else if(a.type==='yogiboPod'){const podMat=mat('#bfc1bd',{map:fabric,bumpMap:fabric,bumpScale:.12,roughness:.98}),seamMat=mat('#858985',{roughness:1}),pod=new THREE.Mesh(podGeometry(w,h,d),podMat);pod.castShadow=pod.receiveShadow=true;g.add(pod);const pipe=(points)=>{const mesh=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points.map(([x,y,z])=>new THREE.Vector3(x,y,z))),48,.09,6,false),seamMat);mesh.castShadow=true;g.add(mesh)};pipe([[0,h-1,-1],[-2,h*.8,-d*.23],[-3,h*.48,-d*.43],[-2,h*.12,-d*.46]]);pipe([[0,h-1,1],[2,h*.8,d*.23],[3,h*.48,d*.43],[2,h*.12,d*.46]]);const gather=B(0,h-2,0,8,5,5,podMat,2);gather.rotation.z=.12;const tag=B(-21,h*.2,d*.445,10,5,.7,mat('#ecece7',{roughness:.9}),.3);tag.rotation.z=-.12;B(-21,h*.2+1,d*.452,6,.65,.4,mat('#4f8493',{roughness:.8}),.15);}
  else if(a.type==='pegboard'){const board=mat('#f1f0ea',{roughness:.72}),hole=mat('#9da19c',{roughness:.8});B(0,h/2,0,w,h,2,board,1);for(let x=-w/2+6;x<w/2-3;x+=8)for(let y=7;y<h-4;y+=8){const dot=cyl(g,x,y,1.3,1.1,1.2,hole);dot.rotation.x=Math.PI/2;}B(0,5,2,w*.56,7,4,board,1);for(const x of [-w*.18,w*.18]){const hook=cyl(g,x,h*.63,3,1.3,7,board);hook.rotation.x=Math.PI/2;}}
  else if(a.type==='plumeriaRug'){const backing=mat('#76685b',{roughness:1}),pile=mat('#ffffff',{map:plumeria,bumpMap:plumeria,bumpScale:.07,roughness:1});B(0,.35,0,w-.5,.7,d-.5,backing,.25);B(0,1.15,0,w,1.3,d,pile,.65);}
  else if(a.type==='sofa'){B(0,20,0,w,35,d,textile,5);B(0,h*.72,-d*.38,w,h*.55,d*.24,textile,5);for(const x of [-w/2+9,w/2-9])B(x,h*.48,0,18,h*.7,d,textile,5);for(const x of [-w*.22,w*.22])B(x,42,5,w*.41,12,d*.7,textile,5);}

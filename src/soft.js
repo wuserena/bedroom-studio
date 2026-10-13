@@ -29,3 +29,14 @@ export function pillowGeometry(w,h,d,{round=Math.min(w,h,d)/3,plump=.55,seed=0}=
   for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),nx=Math.min(1,Math.abs(x)/(w/2)),ny=Math.min(1,Math.abs(y)/(h/2)),body=Math.pow(1-nx**4,.6)*Math.pow(1-ny**4,.6);p.setZ(i,z*(1-plump+plump*body)+.4*Math.sin(x*.3+y*.2+seed)*body);p.setY(i,y*(1-.05*nx*nx))}
   g.computeVertexNormals();return g;
 }
+
+// An unloaded Yogibo Pod: a gathered teardrop whose loose bead filling settles into a broad base.
+// Small three-lobed variations keep the stretch cover from reading as a rigid vase.
+export function podGeometry(w=91,h=122,d=91){
+  const profile=[[1.5,0],[28,1.5],[41,7],[45.5,18],[45,35],[42,55],[36,76],[27,96],[16,111],[6,120],[1.4,122]].map(([r,y])=>new THREE.Vector2(r,y)),g=new THREE.LatheGeometry(profile,72),p=g.attributes.position;
+  for(let i=0;i<p.count;i++){
+    const x=p.getX(i),y=p.getY(i),z=p.getZ(i),angle=Math.atan2(z,x),t=y/122,soft=1+.018*Math.sin(angle*3+t*5)+.009*Math.sin(angle*5-t*7),front=1-.025*Math.max(0,Math.cos(angle))*Math.sin(Math.PI*t)**2;
+    p.setXYZ(i,x*soft,y+.55*Math.sin(angle*2+1.1)*Math.sin(Math.PI*t)**2,z*soft*front);
+  }
+  g.computeBoundingBox();const b=g.boundingBox,size=new THREE.Vector3();b.getSize(size);g.scale(w/size.x,h/size.y,d/size.z);g.computeBoundingBox();g.translate(0,-g.boundingBox.min.y,0);g.computeVertexNormals();return g;
+}
