@@ -39,11 +39,12 @@ for(const [light,label]of [['day','☀ 白天'],['night','☾ 夜晚']]){
  await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/milktea-${light}-interior.png`});
  await page.getByRole('button',{name:'床上',exact:true}).click();await settle();assert.equal(await page.getByRole('button',{name:'床上',exact:true}).getAttribute('aria-pressed'),'true');await page.screenshot({path:`artifacts/milktea-${light}-bed.png`});
 }
-// The other proposals: apply each over the last and keep a day overview and a night interior of it.
+// The other proposals: apply each over the last and keep a day overview, a day interior and a night interior of it.
 for(const q of PROPOSALS.slice(1)){
  await page.getByRole('button',{name:'☀ 白天',exact:true}).click();await page.getByRole('button',{name:'立體全景',exact:true}).click();
  await page.getByRole('button',{name:`套用提案：${q.name}`,exact:true}).click();await eventually(state=>{assert.deepEqual(state.decor,q.decor);assert.equal(state.items.length,before.items.length+q.accents.length)});await settle();await page.screenshot({path:`artifacts/${q.id}-day-overview.png`});
+ await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/${q.id}-day-interior.png`});
  await page.getByRole('button',{name:'☾ 夜晚',exact:true}).click();await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/${q.id}-night-interior.png`});
 }
-assert.deepEqual(errors,[]);console.log('PASS: five proposals applied, one layer swapped and undone, screenshots in artifacts/');
+assert.deepEqual(errors,[]);console.log('PASS: four proposals applied, one layer swapped and undone, screenshots in artifacts/');
 }finally{await browser.close()}

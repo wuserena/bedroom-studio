@@ -14,7 +14,7 @@ import {createCabinet} from './cabinet.js';
 import {fitFurniture} from './furniture-fit.js';
 import {drapeGeometry,pillowGeometry,podGeometry} from './soft.js';
 import {buildGosigGolden,isSharedPlushResource} from './plush.js';
-import {buildMoodLamp,buildVase,buildTableProp,buildWallPiece} from './decor-models.js';
+import {buildMoodLamp,buildVase,buildTableProp,buildWallPiece,buildStorageUnit} from './decor-models.js';
 import {createWindowDressing} from './window-dressing.js';
 
 const M=.01,INSIDE=new Set(['interior','entry','bed']);
@@ -138,13 +138,16 @@ export function createScene(container,callbacks){
  else if(a.type==='wardrobe'){B(0,h/2,0,w,h,d,timber,1);for(const x of [-w*.25,w*.25]){B(x,h/2,d/2+.4,w/2-1,h-4,1.5,timber,.3);B(x+(x<0?w*.19:-w*.19),h*.48,d/2+1.7,1.1,16,1.5,dark,.4);}}
  else if(a.type==='yogiboPod'){const podMat=mat('#bfc1bd',{map:fabric,bumpMap:fabric,bumpScale:.12,roughness:.98}),pod=new THREE.Mesh(podGeometry(w,h,d),podMat);pod.castShadow=pod.receiveShadow=true;g.add(pod);const tag=B(-21,h*.2,d*.445,10,5,.7,mat('#ecece7',{roughness:.9}),.3);tag.rotation.z=-.12;B(-21,h*.2+1,d*.452,6,.65,.4,mat('#4f8493',{roughness:.8}),.15);}
  else if(a.type==='gosigGolden')buildGosigGolden(g);
- else if(a.type==='pegboard'){const board=mat('#f1f0ea',{roughness:.72}),hole=mat('#9da19c',{roughness:.8});B(0,h/2,0,w,h,2,board,1);for(let x=-w/2+6;x<w/2-3;x+=8)for(let y=7;y<h-4;y+=8){const dot=cyl(g,x,y,1.3,1.1,1.2,hole);dot.rotation.x=Math.PI/2;}B(0,5,2,w*.56,7,4,board,1);cyl(g,-w*.3,h*.34,4,3.6,8,board);for(const x of [-w*.18,w*.18]){const hook=cyl(g,x,h*.63,3,1.3,7,board);hook.rotation.x=Math.PI/2;}}
+ else if(a.type==='pegboard'){const board=mat('#f1f0ea',{roughness:.72}),hole=mat('#9da19c',{roughness:.8});B(0,h/2,0,w,h,2,board,1);for(let x=-w/2+6;x<w/2-3;x+=8)for(let y=7;y<h-4;y+=8){const dot=cyl(g,x,y,1.3,1.1,1.2,hole);dot.rotation.x=Math.PI/2;}B(0,5,2,w*.56,7,4,board,1);cyl(g,-w*.3,h*.34,4,3.6,8,board);for(const x of [-w*.18,w*.18]){const hook=cyl(g,x,h*.63,3,1.3,7,board);hook.rotation.x=Math.PI/2;}
+  // Pens and a pair of scissors stand in the container: the pegboard doubles as the pen holder.
+  for(const [i,color]of ['#e9b93a','#3a3c3d','#c4602f','#6f8f6a'].entries())cyl(g,-w*.3-2.2+i*1.5,h*.34+7+i%2,4+(i%2?1:-1),.45,14,mat(color,{roughness:.5}));}
  else if(a.type==='plumeriaRug'){const backing=mat('#76685b',{roughness:1}),pile=mat('#ffffff',{map:plumeria,bumpMap:plumeria,bumpScale:.07,roughness:1});B(0,.35,0,w-.5,.7,d-.5,backing,.25);B(0,1.15,0,w,1.3,d,pile,.65);}
  else if(a.type==='sofa'){B(0,20,0,w,35,d,textile,5);B(0,h*.72,-d*.38,w,h*.55,d*.24,textile,5);for(const x of [-w/2+9,w/2-9])B(x,h*.48,0,18,h*.7,d,textile,5);for(const x of [-w*.22,w*.22])B(x,42,5,w*.41,12,d*.7,textile,5);}
  else if(c.lamp)buildMoodLamp(g,a);
  else if(c.vase)buildVase(g,a);
  else if(c.tabletop&&!c.lamp&&!c.vase)buildTableProp(g,a,weave);
- else if(a.type==='rodalm'||a.type==='kaffetrad')buildWallPiece(g,a,wood);
+ else if(a.type==='rodalm'||a.type==='kaffetrad'||a.type==='hookRail')buildWallPiece(g,a,wood);
+ else if(a.type==='mujiShelf')buildStorageUnit(g,a,weave);
  else {B(0,h/2,0,w,h,d,timber,1);for(const y of [h*.28,h*.72]){B(0,y,d/2+.2,w-3,h*.4,1,timber,.6);B(0,y,d/2+1.2,12,1,1,dark,.3);}}
  // ISJAKT keeps its full 50 cm visual reach while collision only uses the 24 cm base.
  if(a.type!=='nordli'&&a.type!=='isjakt'&&!c.trueScale)fitFurniture(g,a);else{g.position.set(a.x,a.mountHeight||0,a.z);g.rotation.y=a.angle*Math.PI/180;}g.userData.itemId=a.id;g.traverse(o=>{if(o.isMesh)o.userData.itemId=a.id});return g;}
