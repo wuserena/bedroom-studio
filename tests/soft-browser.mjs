@@ -2,7 +2,7 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {mkdir,readFile} from 'node:fs/promises';
 import {PROPOSALS} from '../src/proposals.js';
-// Applies the milk-tea proposal (then the other four) to the saved room, swaps one layer, undoes it, and keeps six shots for the visual review:
+// Applies the milk-tea proposal (then the other proposals) to the saved room, swaps one layer, undoes it, and keeps screenshots for visual review:
 // day and night (night: ceiling lights and floor lamp off, mood lamps only), each from the overview, the interior turned toward the bed head, and lying in bed.
 const base=process.env.BASE_URL||'http://localhost:4173',p=PROPOSALS[0];
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/home/serena/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome',headless:true,args:['--no-sandbox','--enable-unsafe-swiftshader']});
@@ -42,9 +42,9 @@ for(const [light,label]of [['day','☀ 白天'],['night','☾ 夜晚']]){
 // The other proposals: apply each over the last and keep a day overview, a day interior and a night interior of it.
 for(const q of PROPOSALS.slice(1)){
  await page.getByRole('button',{name:'☀ 白天',exact:true}).click();await page.getByRole('button',{name:'立體全景',exact:true}).click();
- await page.getByRole('button',{name:`套用提案：${q.name}`,exact:true}).click();await eventually(state=>{assert.deepEqual(state.decor,q.decor);assert.equal(state.items.length,before.items.length+q.accents.length)});await settle();await page.screenshot({path:`artifacts/${q.id}-day-overview.png`});
+ await page.getByRole('button',{name:`套用提案：${q.name}`,exact:true}).click();await eventually(state=>{assert.deepEqual(state.decor,q.decor);if(q.rearrange){assert.ok(state.items.some(a=>a.type==='storageDesk'));assert.ok(state.items.some(a=>a.type==='wovenRug'));assert.equal(state.items.some(a=>a.type==='wardrobe'),false)}else assert.equal(state.items.length,before.items.length+q.accents.length)});await settle();await page.screenshot({path:`artifacts/${q.id}-day-overview.png`});
  await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/${q.id}-day-interior.png`});
  await page.getByRole('button',{name:'☾ 夜晚',exact:true}).click();await page.getByRole('button',{name:'室內視角',exact:true}).click();await page.mouse.move(780,550);await page.mouse.down();await page.mouse.move(1100,550,{steps:12});await page.mouse.up();await settle();await page.screenshot({path:`artifacts/${q.id}-night-interior.png`});
 }
-assert.deepEqual(errors,[]);console.log('PASS: four proposals applied, one layer swapped and undone, screenshots in artifacts/');
+assert.deepEqual(errors,[]);console.log(`PASS: ${PROPOSALS.length} proposals applied, one layer swapped and undone, screenshots in artifacts/`);
 }finally{await browser.close()}

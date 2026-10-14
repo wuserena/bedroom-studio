@@ -1,6 +1,6 @@
 // Flat tops that small decor can stand on: the fixed joinery and table-height furniture.
 // A surface is a rectangle {x,z,w,d,angle} at height y with `clear` cm of headroom above it.
-const TABLE_TYPES=new Set(['desk','mittzon','nightstand']);
+const TABLE_TYPES=new Set(['desk','mittzon','storageDesk','nightstand']);
 export function cabinetSurfaces(r){const sy=r.lowHeight/222,sz=r.depth/333,x0=r.width-r.cabinetDepth,x1=r.width-2,left=y=>92+104*(y-9)/211,right=y=>144+107*(y-9)/211;
  // The clad beam leans toward the door as it rises, so each right-hand surface starts where the beam is at its ceiling.
  const S=(id,name,z0,z1,top,ceiling)=>({id:'cab:'+id,name,x:(x0+x1)/2,z:(z0+z1)*sz/2,w:x1-x0,d:(z1-z0)*sz,angle:0,y:top*sy,clear:(ceiling-top)*sy});
