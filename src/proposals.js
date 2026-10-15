@@ -14,6 +14,7 @@ const STORAGE=[BEDSIDE_TRAY,{type:'fladis',on:['cab:leftTop','cab:left72'],at:[.
  {type:'mujiShelf',floor:'front'},{type:'hookRail',face:'column-window',mountHeight:95},{type:'skincareCaddy',on:['desk'],at:[.35,.2]},{type:'docBox',on:['cab:left9'],at:[.5,1]},{type:'souvenirs',on:['cab:shelf140','cab:shelf173'],at:[.5,.5]}];
 // Keep the entry-right wall completely clear for the projected picture.
 const CINEMA_STORAGE=STORAGE.filter(a=>!['pegboard','mujiShelf'].includes(a.type));
+const RARERAW_STORAGE=CINEMA_STORAGE.filter(a=>a.type!=='fejka');
 const mirror=(extra={})=>({type:'kaffetrad',over:'desk',shift:32,mountHeight:105,...extra}),picture=(art,extra={})=>({type:'rodalm',art,over:'bed',shift:0,mountHeight:125,...extra});
 const look=(sheer,sheerOpen,main,mainOpen,floor='oak')=>({floor,window:{sheer:{product:sheer,open:sheerOpen},main:{product:main,open:mainOpen}}}),bed=(duvetColor,pillowColor,...cushions)=>({duvetColor,pillowColor,cushions,throwOn:false});
 // Milk tea came from IKEA's own room ideas. The other three follow styles the user picked from Pinterest searches, so they
@@ -29,8 +30,8 @@ export const PROPOSALS=Object.freeze([
   decor:look('matilda',.15,'fridansGrey',.9,'tile'),bedding:bed('#f2f1ee','#dcdcd9','cottonCharcoal','cottonGrey'),accents:[lamp('tarnaby',{color:'#2b2b2a'}),vase('berakna','eucalyptus'),...STORAGE,mirror({color:'#2b2b2a'}),picture('abstractBlack',{color:'#2b2b2a'})]},
  {id:'cinema',name:'橘灰木質放映室',source:'Pinterest 小房間整合書桌、Japandi 收納床與橘灰北歐軟裝案例',rearrange:true,summary:'不是換色，而是換一套家具：圓角直紋木收納桌、米白曲木工作椅、暖橘燈芯絨懶骨頭、橘灰有機圖案厚織地毯與窗下直紋門矮櫃。NORDLI 收納床繼續當衣櫃，拱形化妝鏡與和紙燈增加材質層次；懶骨頭正對一進門右手的大白投影牆，牆面完全留空。',palette:['#f2eadb','#c99968','#b95f38','#8f918e'],
   decor:look('matilda',.14,'linenRoman',.9),bedding:bed('#ded9d0','#f5f0e7','checkerClay','boucleCream'),accents:[lamp('paperColumnLamp'),{type:'miniProjector',on:['cab:shelf140'],at:[.5,.5],turn:270},vase('stockholmVase','eucalyptus'),...CINEMA_STORAGE,{type:'tambourShelf',floor:'front'},{type:'archedMirror',on:['desk'],at:[.76,.22]},picture('warmGrid')]},
- {id:'rareraw',name:'韓系彩鋼工作室',source:'Instagram MARAIS 瑪黑家居選物「Colorful Home Vibe with rareraw」與 rareraw 官方尺寸',rearrange:true,summary:'以白牆、淺橡木與暖白織品做留白，再用 Rare Green、City Orange、City Blue 鋼件像積木一樣點亮空間。新增 POLES 立鏡、CITY BOYS 網籃推車、ALTER 橡木鋼架椅、FLIT 圓弧邊桌、鋼構橡木書桌與細線格紋地毯；NORDLI 收納床、懶骨頭和投影白牆繼續保留。',palette:['#eeeae0','#cda46f','#43b947','#ef6b32','#4e86c5'],
-  decor:look('matilda',.14,'fridansGrey',.9),bedding:bed('#e7e3dc','#f6f2e9','cottonGrey','velvetRust'),accents:[lamp('spetsboj',{color:'#43b947'}),{type:'miniProjector',on:['cab:shelf140'],at:[.5,.5],turn:270},vase('berakna','eucalyptus'),...CINEMA_STORAGE,picture('warmGrid')]}]);
+ {id:'rareraw',name:'暖橘彩鋼工作室',source:'Instagram MARAIS 瑪黑家居選物「Colorful Home Vibe with rareraw」與 rareraw 官方尺寸',rearrange:true,summary:'保留 rareraw 鋼件像積木般清楚的輪廓，但不使用綠色：奶油白鋼構書桌安定大面積，暖橘 POLES 立鏡、鈷藍 CITY BOYS 網籃、芥末黃桌燈與橘紅懶骨頭分散成小色塊，再用原木、銀灰與暖白織品把色彩接回房間。NORDLI 收納床與投影白牆繼續保留。',palette:['#eeeae0','#cda46f','#aeb4b5','#ef6b32','#4e86c5'],
+  decor:look('matilda',.14,'fridansGrey',.9),bedding:bed('#e7e3dc','#f6f2e9','cottonGrey','velvetRust'),accents:[lamp('spetsboj',{color:'#e9b93a'}),{type:'miniProjector',on:['cab:shelf140'],at:[.5,.5],turn:270},vase('berakna','babysWhite'),...RARERAW_STORAGE,picture('warmGrid')]}]);
 const TAG='proposal:',REACH=80,BEDS=new Set(['nordli','bed','single']),DESKS=new Set(['mittzon','storageDesk','flutedDesk','rarerawDesk','desk']);
 
 function cinemaFurniture(state,p){const old=state.items,room=state.room,prior=type=>old.find(a=>a.type===type),make=(type,id,x,z,angle,extra={})=>{const c=CATALOG[type];return {id,type,x,z,w:c.w,d:c.d,h:c.h,angle,color:c.color,...extra}},bedOld=old.find(a=>BEDS.has(a.type)),chairOld=old.find(a=>['kangaroo','chair','dyvlinge'].includes(a.type)),podOld=prior('yogiboPod'),rugOld=old.find(a=>CATALOG[a.type]?.floorCovering),items=[
@@ -43,12 +44,12 @@ function cinemaFurniture(state,p){const old=state.items,room=state.room,prior=ty
 function rarerawFurniture(state,p){const old=state.items,room=state.room,prior=type=>old.find(a=>a.type===type),make=(type,id,x,z,angle,extra={})=>{const c=CATALOG[type];return {id,type,x,z,w:c.w,d:c.d,h:c.h,angle,color:c.color,...extra}},bedOld=old.find(a=>BEDS.has(a.type)),chairOld=old.find(a=>['kangaroo','chair','dyvlinge','bentwoodChair','alterChair'].includes(a.type)),podOld=old.find(a=>['yogiboPod','corduroyBeanbag'].includes(a.type)),rugOld=old.find(a=>CATALOG[a.type]?.floorCovering),items=[
  make('signalRug',rugOld?.id||'rareraw-rug',230,105,0),
  make('nordli',bedOld?.id||'rareraw-bed',200,233,90,{beddingSide:1,...p.bedding,cushions:[...p.bedding.cushions]}),
- make('rarerawDesk',prior('flutedDesk')?.id||prior('mittzon')?.id||prior('desk')?.id||'rareraw-desk',85,36,0),
+ make('rarerawDesk',prior('flutedDesk')?.id||prior('mittzon')?.id||prior('desk')?.id||'rareraw-desk',85,36,0,{color:'#e9e5d8'}),
  make('alterChair',chairOld?.id||'rareraw-chair',85,101,180),
  make('corduroyBeanbag',podOld?.id||'rareraw-pod',215,105,270,{color:'#b95f38'}),
  make('flitTable',prior('flitTable')?.id||prior('nightstand')?.id||'rareraw-flit',75,150,0,{color:'#ef6b32'}),
- make('polesMirror',prior('polesMirror')?.id||'rareraw-mirror',282,140,270,{color:'#43b947'}),
- make('cityboysBasket',prior('cityboysBasket')?.id||'rareraw-basket',165,22.5,0,{color:'#43b947'})
+ make('polesMirror',prior('polesMirror')?.id||'rareraw-mirror',282,140,270,{color:'#ef6b32'}),
+ make('cityboysBasket',prior('cityboysBasket')?.id||'rareraw-basket',165,22.5,0,{color:'#4e86c5'})
  ];for(const a of items){const v=validPlacement(a,items,room);if(!v.ok)throw Error(`彩鋼配置的${CATALOG[a.type].name}放不下：${v.reason}`)}const dogOld=prior('gosigGolden');if(dogOld){const dog=findPlacement({...dogOld,supportId:undefined,mountHeight:undefined},items,room);if(dog)items.push(dog)}return items;}
 function placeAt(base,s,accent,items,room){for(const turn of accent.turn?[accent.turn,0]:[0,90]){const ew=turn?base.d:base.w,ed=turn?base.w:base.d;if(ew>s.w||ed>s.d)continue;const candidate={...base,...pointOn(s,accent.at[0],accent.at[1],ew,ed),angle:(s.angle+turn)%360,supportId:s.id,mountHeight:s.y};if(validPlacement(candidate,items,room).ok)return candidate;}return findPlacement(base,items,room,s.id);}
 // The first free spot along the window wall, starting where the desk ends so the unit stands beside it rather than in the corner.
