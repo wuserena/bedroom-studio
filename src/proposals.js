@@ -48,7 +48,7 @@ function rarerawFurniture(state,p){const old=state.items,room=state.room,prior=t
  make('alterChair',chairOld?.id||'rareraw-chair',85,101,180),
  make('corduroyBeanbag',podOld?.id||'rareraw-pod',215,105,270,{color:'#b95f38'}),
  make('flitTable',prior('flitTable')?.id||prior('nightstand')?.id||'rareraw-flit',75,150,0,{color:'#ef6b32'}),
- make('polesMirror',prior('polesMirror')?.id||'rareraw-mirror',282,140,270,{color:'#ef6b32'}),
+ make('polesMirror',prior('polesMirror')?.id||'rareraw-mirror',282,140,90,{color:'#ef6b32'}),
  make('cityboysBasket',prior('cityboysBasket')?.id||'rareraw-basket',165,22.5,0,{color:'#4e86c5'})
  ];for(const a of items){const v=validPlacement(a,items,room);if(!v.ok)throw Error(`彩鋼配置的${CATALOG[a.type].name}放不下：${v.reason}`)}const dogOld=prior('gosigGolden');if(dogOld){const dog=findPlacement({...dogOld,supportId:undefined,mountHeight:undefined},items,room);if(dog)items.push(dog)}return items;}
 function placeAt(base,s,accent,items,room){for(const turn of accent.turn?[accent.turn,0]:[0,90]){const ew=turn?base.d:base.w,ed=turn?base.w:base.d;if(ew>s.w||ed>s.d)continue;const candidate={...base,...pointOn(s,accent.at[0],accent.at[1],ew,ed),angle:(s.angle+turn)%360,supportId:s.id,mountHeight:s.y};if(validPlacement(candidate,items,room).ok)return candidate;}return findPlacement(base,items,room,s.id);}
