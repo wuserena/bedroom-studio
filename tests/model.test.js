@@ -40,6 +40,8 @@ test('三個提案的所有家具都合法、沒有綠色、含必要家具', ()
     const res = M.applyProposal(s, p.id);
     assert.deepEqual(res, { moved: [], removed: [] }, p.name);
     for (const it of s.items) assert.equal(M.checkPlacement(s, it).ok, true, `${p.name} ${M.CATALOG[it.type].name}`);
+    const bedFp = M.footprint(s.items.find(i => i.type === 'nordli'));
+    assert.ok(Math.min(...bedFp.map(q => q[1])) >= 80, p.name + ' 床不可貼近大窗牆');
     const types = s.items.map(i => i.type);
     for (const need of ['nordli', 'beanbag', 'poles', 'isjakt']) assert.ok(types.includes(need), p.name + need);
     assert.ok(types.some(t => t.startsWith('desk1')));

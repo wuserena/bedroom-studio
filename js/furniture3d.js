@@ -321,28 +321,45 @@ export function createFurnitureFactory(tx) {
     return g;
   };
 
-  // IKEA GOSIG GOLDEN：趴著的黃金獵犬娃娃
+  // IKEA GOSIG GOLDEN：趴著的黃金獵犬娃娃——四肢前後伸直貼地、下巴靠近前腳、長垂耳、蓬鬆尾巴
   B.gosig = () => {
     const g = new THREE.Group();
-    const fur = S('#d9a45a', { roughness: 1, bumpMap: tx.fur, bumpScale: 2.4 });
-    const light = S('#ecc88f', { roughness: 1, bumpMap: tx.fur, bumpScale: 2.2 });
-    const ear = S('#c38b42', { roughness: 1, bumpMap: tx.fur, bumpScale: 2.6 });
-    const black = S('#1d1a18', { roughness: 0.35 });
-    ball(g, 1, fur, 0, 10.5, -5, 12.5, 10.5, 22);            // 身體
-    ball(g, 1, light, 0, 12.5, 12, 9.4, 10, 9.5);            // 胸口
-    ball(g, 1, fur, 0, 20.5, 21, 9.3, 8.9, 9.8);             // 頭
-    ball(g, 1, light, 0, 17.6, 29.6, 5, 4.3, 6.2);           // 口鼻
-    ball(g, 1.75, black, 0, 19.4, 35.2, 1.15, 0.9, 0.9);
+    const mk = (c, b) => S(c, { roughness: 1, bumpMap: tx.fur, bumpScale: b });
+    const fur = mk('#e2b56f', 2.6), light = mk('#efd29c', 2.4), ear = mk('#c9944c', 2.8);
+    const black = S('#1b1816', { roughness: 0.3 }), brown = S('#3a2a20', { roughness: 0.5 });
+    // 毛絨外層：略大的半透明外殼，用毛流貼圖挖洞，邊緣看起來毛茸茸
+    const fuzzOf = (m) => { const f = m.material.clone(); f.transparent = true; f.alphaMap = tx.fur; f.alphaTest = 0.42; f.bumpScale = 3.2; f.side = THREE.DoubleSide; return f; };
+    const fuzzy = (m, k = 1.06) => { for (const kk of [k, 1 + (k - 1) * 1.9]) { const c = new THREE.Mesh(m.geometry, fuzzOf(m)); c.position.copy(m.position); c.rotation.copy(m.rotation); c.scale.copy(m.scale).multiplyScalar(kk); c.castShadow = false; g.add(c); } return m; };
+    const blob = (mat, x, y, z, sx, sy, sz, k) => fuzzy(ball(g, 1, mat, x, y, z, sx, sy, sz), k);
+    blob(fur, 0, 8.6, -6, 11.5, 8.6, 20);                    // 長而扁的身體
+    blob(fur, 0, 9.6, -19, 11, 8.4, 9.5);                    // 臀部
+    blob(light, 0, 9.5, 9, 9.5, 8.6, 9);                     // 胸口（較淺）
+    const head = blob(fur, 0, 14.2, 20, 9.2, 8.2, 9.6, 1.05); // 大頭，稍微抬起
+    head.rotation.x = 0.12;
+    blob(fur, 0, 19.8, 17.5, 6.4, 3.6, 6, 1.07);             // 頭頂
+    blob(light, 0, 11.2, 28.6, 5.6, 4.6, 7.2, 1.05);         // 長口鼻
+    blob(light, 0, 8.4, 26.5, 4.6, 2.6, 5.6, 1.04);          // 下巴
+    ball(g, 1, black, 0, 13.6, 35.2, 2.5, 1.9, 1.7);         // 大鼻頭
+    tube(g, [[-2.6, 9.2, 33.2], [0, 8.5, 34.3], [2.6, 9.2, 33.2]], 0.28, brown, 8); // 嘴線
+    tube(g, [[0, 12, 35.4], [0, 8.7, 34.3]], 0.26, brown, 4);
     for (const sx of [-1, 1]) {
-      ball(g, 1.15, black, sx * 3.7, 23.6, 28.6);
-      const e = ball(g, 1, ear, sx * 9, 18.6, 19.5, 2.4, 7.6, 5.2); e.rotation.z = sx * 0.3;
-      const leg = add(g, new THREE.CapsuleGeometry(3.6, 13, 6, 12), fur, sx * 7.6, 3.7, 22.5); leg.rotation.x = Math.PI / 2;
-      ball(g, 1, light, sx * 7.6, 3.5, 31, 4, 3.5, 4.4);
-      ball(g, 1, fur, sx * 11, 5.6, -15, 5.6, 5.6, 10);
-      ball(g, 1, light, sx * 13, 2.9, -5.5, 3.3, 2.9, 5.2);
+      ball(g, 1.3, black, sx * 4.1, 17.3, 27.4);              // 眼睛
+      ball(g, 0.35, S('#ffffff', { roughness: 0.2 }), sx * 4.4, 17.9, 28.5);
+      tube(g, [[sx * 2.4, 19.6, 26.6], [sx * 4.3, 20, 26.6], [sx * 6, 19.2, 25.6]], 0.3, ear, 6); // 眉
+      const e = blob(ear, sx * 9.6, 11.2, 18.4, 2.5, 8.8, 6, 1.1); // 長垂耳
+      e.rotation.z = sx * 0.34; e.rotation.x = -0.12;
+      const fl = fuzzy(add(g, new THREE.CapsuleGeometry(3.5, 15, 6, 12), fur, sx * 7.6, 3.6, 22)); // 前腳向前伸
+      fl.rotation.x = Math.PI / 2; fl.rotation.z = sx * 0.1;
+      blob(light, sx * 8.4, 3.4, 32, 4.1, 3.4, 4.6, 1.05);
+      const hl = fuzzy(add(g, new THREE.CapsuleGeometry(3.9, 15, 6, 12), fur, sx * 9.5, 3.9, -27)); // 後腳向後伸直
+      hl.rotation.x = Math.PI / 2; hl.rotation.z = -sx * 0.22;
+      blob(light, sx * 11.8, 3.3, -36.6, 3.8, 3.2, 4.6, 1.05);
+      blob(fur, sx * 9.6, 6.4, -17, 6, 6, 8.5);               // 大腿
     }
-    tube(g, [[0, 9, -25], [3, 6.5, -30], [8, 4.2, -33], [13, 3.4, -32.5]], 2.6, fur, 16);
-    ball(g, 2.7, fur, 13, 3.4, -32.5);
+    const tail = fuzzy(tube(g, [[0, 9.5, -27], [0, 6.2, -33], [0, 4.2, -39], [0, 3.6, -43]], 2.7, fur, 14), 1.14);
+    void tail;
+    blob(fur, 0, 3.6, -43.5, 2.8, 2.8, 3.2, 1.12);
+    g.scale.setScalar(70 / 80); // 鼻尖到尾端合計 70 cm
     return g;
   };
 

@@ -405,19 +405,24 @@ export function resolveRoom(state) {
 
 // ---------- 佈置提案 ----------
 // 座標以預設房間為準；套用後會再經過 resolveRoom 以配合修改過的房間尺寸。
+// 床一律離開大窗牆（靠窗太冷）：床沿木作牆擺放，床頭在遠離窗戶的門口牆側，床尾距窗約 90 cm。
+function bedAwayFromWindow(pal) {
+  return makeItem('nordli', { x: 240.5, z: 191.5, rot: 180, colors: { duvet: pal.duvet, pillow: pal.pillow } });
+}
+// 提案 A：書桌在大窗下採光
 function layoutA(pal) {
-  const bed = makeItem('nordli', { x: 240.5, z: 101.5, rot: 0, colors: { duvet: pal.duvet, pillow: pal.pillow } });
-  const desk = makeItem('desk120', { x: 35.5, z: 61.5, rot: 90, colors: { top: pal.wood, frame: pal.frame } });
+  const bed = bedAwayFromWindow(pal);
+  const desk = makeItem('desk120', { x: 60.5, z: 35.5, rot: 0, colors: { top: pal.wood, frame: pal.frame } });
   return [
     makeItem('rug', { x: 125, z: 185, rot: 0, colors: { body: pal.rug } }),
     bed, desk,
-    makeItem('deskChair', { x: 98, z: 62, rot: 270, colors: { seat: pal.chair } }),
-    makeItem('isjakt', { x: 84, z: 13, rot: 270 }),
-    makeItem('poles', { x: 17.5, z: 158, rot: 90, colors: { body: pal.mirror } }),
+    makeItem('deskChair', { x: 58, z: 97, rot: 180, colors: { seat: pal.chair } }),
+    makeItem('isjakt', { x: 134, z: 13, rot: 270 }),
+    makeItem('poles', { x: 17.5, z: 160, rot: 90, colors: { body: pal.mirror } }),
     makeItem('beanbag', { x: 133, z: 190, rot: 0, colors: { body: pal.beanbag } }),
-    makeItem('shelf', { x: 221, z: 218.5, rot: 0, colors: { body: pal.wood } }),
-    makeItem(pal.side || 'trolley', { x: 281, z: 227, rot: 0, colors: { body: pal.metal } }),
-    makeItem('pegboard', { wall: 'left', along: 62, y: 108 }),
+    makeItem('shelf', { x: 221, z: 15.5, rot: 0, colors: { body: pal.wood } }),
+    makeItem(pal.side || 'trolley', { x: 281, z: 23.5, rot: 0, colors: { body: pal.metal } }),
+    makeItem('pegboard', { wall: 'left', along: 40, y: 108 }),
     makeItem('gosig', { parent: bed.id, lx: -18, lz: 30, lrot: 25 }),
     makeItem('cushion', { parent: bed.id, lx: 30, lz: -40, lrot: 12, colors: { body: pal.cushion } }),
     makeItem('deskLamp', { parent: desk.id, lx: -45, lz: -20, lrot: 30, colors: { body: pal.metal } }),
@@ -425,17 +430,18 @@ function layoutA(pal) {
     makeItem('vanity', { parent: desk.id, lx: 12, lz: -24, lrot: 0 }),
   ];
 }
+// 提案 B：書桌靠左牆，窗下留給矮收納櫃
 function layoutB(pal) {
-  const bed = makeItem('nordli', { x: 101.5, z: 60.5, rot: 90, colors: { duvet: pal.duvet, pillow: pal.pillow } });
-  const desk = makeItem('desk120', { x: 265.5, z: 185, rot: 270, colors: { top: pal.wood, frame: pal.frame } });
+  const bed = bedAwayFromWindow(pal);
+  const desk = makeItem('desk120', { x: 35.5, z: 61.5, rot: 90, colors: { top: pal.wood, frame: pal.frame } });
   return [
-    makeItem('rug', { x: 110, z: 188, rot: 0, colors: { body: pal.rug } }),
+    makeItem('rug', { x: 125, z: 188, rot: 0, colors: { body: pal.rug } }),
     bed, desk,
-    makeItem('deskChair', { x: 203, z: 185, rot: 90, colors: { seat: pal.chair } }),
-    makeItem('isjakt', { x: 288.5, z: 111, rot: 0 }),
-    makeItem('poles', { x: 17.5, z: 157, rot: 90, colors: { body: pal.mirror } }),
-    makeItem('beanbag', { x: 110, z: 180, rot: 0, colors: { body: pal.beanbag } }),
-    makeItem('shelf', { x: 244, z: 15.5, rot: 0, colors: { body: pal.wood } }),
+    makeItem('deskChair', { x: 98, z: 62, rot: 270, colors: { seat: pal.chair } }),
+    makeItem('isjakt', { x: 84, z: 13, rot: 270 }),
+    makeItem('poles', { x: 17.5, z: 158, rot: 90, colors: { body: pal.mirror } }),
+    makeItem('beanbag', { x: 133, z: 190, rot: 0, colors: { body: pal.beanbag } }),
+    makeItem('shelf', { x: 221, z: 15.5, rot: 0, colors: { body: pal.wood } }),
     makeItem('gosig', { parent: bed.id, lx: 20, lz: 35, lrot: -20 }),
     makeItem('deskLamp', { parent: desk.id, lx: 45, lz: -20, lrot: -30, colors: { body: pal.metal } }),
     makeItem('organizer', { parent: desk.id, lx: -38, lz: -22, lrot: 0 }),
@@ -444,11 +450,11 @@ function layoutB(pal) {
 }
 
 export const PROPOSALS = [
-  { id: 'retro', name: '復古暖橘', desc: '暖橘寢具、不鏽鋼立鏡與銀色推車；書桌靠窗採光，懶骨頭正對投影牆。',
+  { id: 'retro', name: '復古暖橘', desc: '床離開窗邊、沿木作牆擺放；暖橘寢具、不鏽鋼立鏡與銀色推車，書桌在大窗下採光，懶骨頭正對投影牆。',
     build: () => layoutA({ duvet: '#d9743c', pillow: '#efe8da', wood: '#d9bd8f', frame: '#f1efe9', chair: '#d9bd8f', mirror: '#c2c7c9', beanbag: '#c3c4c2', rug: '#ece4d3', metal: '#c9cdd0', cushion: '#7f9bb8' }) },
-  { id: 'muji', name: '無印日系', desc: '床橫放在大窗下，書桌靠木作牆；燕麥色寢具配橡木與奶油米立鏡。',
+  { id: 'muji', name: '無印日系', desc: '床離開窗邊；書桌靠左牆，窗下放矮收納櫃。燕麥色寢具配橡木與奶油米立鏡。',
     build: () => layoutB({ duvet: '#d8c9b0', pillow: '#efe8da', wood: '#d9bd8f', frame: '#f1efe9', chair: '#efe8da', mirror: '#e9e3d2', beanbag: '#c3c4c2', rug: '#ece4d3', metal: '#ece6d6' }) },
-  { id: 'nordic', name: '灰白北歐・金屬', desc: '灰白寢具、銀色金屬桌架與邊桌，加一點霧藍；韓系金屬家具感。',
+  { id: 'nordic', name: '灰白北歐・金屬', desc: '床離開窗邊；灰白寢具、銀色金屬桌架與邊桌，加一點霧藍，韓系金屬家具感。',
     build: () => layoutA({ duvet: '#c3c4c2', pillow: '#efe8da', wood: '#f1efe9', frame: '#c9cdd0', chair: '#7f9bb8', mirror: '#86abd0', beanbag: '#c3c4c2', rug: '#c9c8c4', metal: '#c9cdd0', cushion: '#d9743c', side: 'sideTable' }) },
 ];
 
