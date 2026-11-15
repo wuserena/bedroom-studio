@@ -124,9 +124,9 @@ await close('poles', 'poles', 330, 1.35, 1.25, 95);
 await close('bed', 'nordli', 380, -1.2, 0.95, 40);
 await close('beanbag', 'beanbag', 260, 0.5, 1.05, 40);
 await close('desk', 'desk120', 300, 1.2, 1.0, 70);
-await close('isjakt', 'isjakt', 330, 0.9, 1.2, 110);
-await close('dog', 'gosig', 125, -0.9, 1.0, 60);
-await close('dog2', 'gosig', 125, 0.6, 1.2, 58);
+await close('isjakt', 'isjakt', 330, 2.2, 1.35, 100);
+await close('dog', 'gosig', 115, -1.0, 1.15, 60);
+await close('dog2', 'gosig', 115, -2.3, 1.0, 60);
 await close('wood', 'trolley', 520, -1.45, 1.2, 110);
 
 // ---- 手機（iPhone 尺寸、觸控）----

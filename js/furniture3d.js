@@ -248,23 +248,30 @@ export function createFurnitureFactory(tx) {
     return g;
   };
 
-  // IKEA ISJAKT：上照燈 + 可彎閱讀燈
+  // IKEA ISJAKT（依官網商品圖）：圓盤底座上立著兩支並排細管；高的一支頂著薄圓盤上照燈，
+  // 矮的一支在約 100 cm 處彎成水平燈臂，末端是朝下的小圓盤閱讀燈；兩管之間有開關盒。
   B.isjakt = (it) => {
-    const g = new THREE.Group(), m = S('#d2d4d2', { roughness: 0.3, metalness: 0.85 });
-    cyl(g, 12, 2, m, 0, 1, 0, 11.6, 40);
-    cyl(g, 1.25, 172, m, 0, 88, 0, 1.25, 16);
-    const bowlGeo = new THREE.LatheGeometry([[1.3, 0], [5, 0.6], [11, 3.4], [14, 7.2], [13.3, 7.4], [10.4, 4], [4.8, 1.5], [1.3, 1.2]].map(p => new THREE.Vector2(...p)), 40);
-    const bowl = add(g, bowlGeo, m, 0, 173, 0); bowl.material = m.clone(); bowl.material.side = THREE.DoubleSide;
-    const upGlow = glow(); cyl(g, 10.2, 0.6, upGlow, 0, 178.4, 0, 12.6, 32);
-    // 閱讀燈臂（朝 +z 伸出）
-    cyl(g, 1.9, 6, m, 0, 118, 0);
-    tube(g, [[0, 118, 1.5], [0, 127, 9], [0, 138, 22], [0, 141, 35], [0, 136, 44]], 0.75, m, 40);
-    const head = cyl(g, 4.2, 9, m, 0, 132.5, 46.5, 2.2, 24); head.rotation.x = 0.5;
-    const readGlow = glow(); const lens = cyl(g, 3.6, 0.5, readGlow, 0, 128.6, 48.7, 3.6, 20); lens.rotation.x = 0.5;
-    const up = new THREE.SpotLight('#ffe6c2', 0, 600, 1.25, 1, 2); up.position.set(0, 176, 0);
-    up.target.position.set(0, 400, 0); g.add(up, up.target);
-    const rd = new THREE.SpotLight('#ffe9cc', 0, 400, 0.75, 0.7, 2); rd.position.set(0, 128, 49);
-    rd.target.position.set(0, 0, 76); g.add(rd, rd.target);
+    const g = new THREE.Group(), m = S('#cfd1cf', { roughness: 0.32, metalness: 0.9 }), dark = S('#3c3d3e', { roughness: 0.5 });
+    const R = 1.05, zt = -2.3, zs = 2.3;
+    add(g, new THREE.LatheGeometry([[0, 0], [12, 0], [12, 1.1], [11.2, 1.8], [0, 1.8]].map(p => new THREE.Vector2(...p)), 56), m);
+    box(g, 3.2, 0.5, 9.4, m, 0, 2.05, 0);                                   // 底座上的連接片
+    cyl(g, R, 176.2, m, 0, 1.8 + 88.1, zt, R, 16);                          // 高管 → 上照燈
+    tube(g, [[0, 1.8, zs], [0, 60, zs], [0, 95, zs], [0, 100.5, zs + 1.6], [0, 102.4, zs + 6.5], [0, 102.4, 20], [0, 102.4, 31]], R, m, 90); // 矮管彎成燈臂
+    for (const y of [40, 124]) box(g, 2.2, 1.2, 6.6, m, 0, y, 0);           // 兩管之間的固定夾（上方那個接高管與燈臂轉折處）
+    box(g, 3.4, 9, 3.4, m, 0, 80, 0);                                       // 開關盒與兩顆旋鈕
+    for (const y of [78, 82.4]) { const k = cyl(g, 0.9, 1.2, dark, 2.2, y, 0, 0.9, 16); k.rotation.z = Math.PI / 2; }
+    // 上照燈：薄圓盤，頂面是發光的擴散片
+    cyl(g, 2.2, 1.6, m, 0, 177.2, zt, 3.4, 20);
+    cyl(g, 11.2, 2, m, 0, 179, zt, 12, 48);
+    const upGlow = glow(); cyl(g, 10.9, 0.3, upGlow, 0, 180.05, zt, 10.9, 48);
+    // 閱讀燈：燈臂末端朝下的小圓盤
+    const head = new THREE.Group(); head.position.set(0, 101.3, 33.5); head.rotation.x = 0.14; g.add(head);
+    cyl(head, 5.4, 2, m, 0, 0, 0, 5.4, 36);
+    const readGlow = glow(); cyl(head, 4.6, 0.3, readGlow, 0, -1.05, 0, 4.6, 36);
+    const up = new THREE.SpotLight('#ffe6c2', 0, 600, 1.3, 1, 2); up.position.set(0, 181, zt);
+    up.target.position.set(0, 400, zt); g.add(up, up.target);
+    const rd = new THREE.SpotLight('#ffe9cc', 0, 400, 0.85, 0.7, 2); rd.position.set(0, 99.5, 33.7);
+    rd.target.position.set(0, 0, 44); g.add(rd, rd.target);
     g.userData.lamps = [{ key: 'up', light: up, power: 9 * LUX, glow: upGlow }, { key: 'read', light: rd, power: 3.2 * LUX, glow: readGlow }];
     return g;
   };
@@ -321,45 +328,44 @@ export function createFurnitureFactory(tx) {
     return g;
   };
 
-  // IKEA GOSIG GOLDEN：趴著的黃金獵犬娃娃——四肢前後伸直貼地、下巴靠近前腳、長垂耳、蓬鬆尾巴
+  // IKEA GOSIG GOLDEN（依官網商品圖）：整隻同色的淺米金色長毛絨，趴姿但抬頭挺胸，
+  // 前腳向前伸、腳底有深色肉墊，嘴巴張開吐出橘紅色舌頭，垂耳，粗尾巴向後。
   B.gosig = () => {
-    const g = new THREE.Group();
-    const mk = (c, b) => S(c, { roughness: 1, bumpMap: tx.fur, bumpScale: b });
-    const fur = mk('#e2b56f', 2.6), light = mk('#efd29c', 2.4), ear = mk('#c9944c', 2.8);
-    const black = S('#1b1816', { roughness: 0.3 }), brown = S('#3a2a20', { roughness: 0.5 });
-    // 毛絨外層：略大的半透明外殼，用毛流貼圖挖洞，邊緣看起來毛茸茸
-    const fuzzOf = (m) => { const f = m.material.clone(); f.transparent = true; f.alphaMap = tx.fur; f.alphaTest = 0.42; f.bumpScale = 3.2; f.side = THREE.DoubleSide; return f; };
-    const fuzzy = (m, k = 1.06) => { for (const kk of [k, 1 + (k - 1) * 1.9]) { const c = new THREE.Mesh(m.geometry, fuzzOf(m)); c.position.copy(m.position); c.rotation.copy(m.rotation); c.scale.copy(m.scale).multiplyScalar(kk); c.castShadow = false; g.add(c); } return m; };
-    const blob = (mat, x, y, z, sx, sy, sz, k) => fuzzy(ball(g, 1, mat, x, y, z, sx, sy, sz), k);
-    blob(fur, 0, 8.6, -6, 11.5, 8.6, 20);                    // 長而扁的身體
-    blob(fur, 0, 9.6, -19, 11, 8.4, 9.5);                    // 臀部
-    blob(light, 0, 9.5, 9, 9.5, 8.6, 9);                     // 胸口（較淺）
-    const head = blob(fur, 0, 14.2, 20, 9.2, 8.2, 9.6, 1.05); // 大頭，稍微抬起
-    head.rotation.x = 0.12;
-    blob(fur, 0, 19.8, 17.5, 6.4, 3.6, 6, 1.07);             // 頭頂
-    blob(light, 0, 11.2, 28.6, 5.6, 4.6, 7.2, 1.05);         // 長口鼻
-    blob(light, 0, 8.4, 26.5, 4.6, 2.6, 5.6, 1.04);          // 下巴
-    ball(g, 1, black, 0, 13.6, 35.2, 2.5, 1.9, 1.7);         // 大鼻頭
-    tube(g, [[-2.6, 9.2, 33.2], [0, 8.5, 34.3], [2.6, 9.2, 33.2]], 0.28, brown, 8); // 嘴線
-    tube(g, [[0, 12, 35.4], [0, 8.7, 34.3]], 0.26, brown, 4);
+    const g = new THREE.Group(), d = new THREE.Group();
+    g.add(d);
+    const fur = S('#cfae78', { roughness: 1, bumpMap: tx.fur, bumpScale: 3 });
+    const shade = S('#c19e68', { roughness: 1, bumpMap: tx.fur, bumpScale: 3.2 });
+    const pad = S('#3a3330', { roughness: 0.9, bumpMap: tx.weaveFine, bumpScale: 0.6 });
+    const black = S('#1b1816', { roughness: 0.3 }), tongue = S('#e0694a', { roughness: 0.8 }), mouth = S('#5a2f2a', { roughness: 0.9 });
+    const fuzzMat = (m) => { const f = m.clone(); f.alphaMap = tx.fur; f.alphaTest = 0.5; f.side = THREE.DoubleSide; return f; };
+    const fuzzy = (m, k = 1.05) => { const c = new THREE.Mesh(m.geometry, fuzzMat(m.material)); c.position.copy(m.position); c.rotation.copy(m.rotation); c.scale.copy(m.scale).multiplyScalar(k); c.castShadow = false; c.userData.fuzz = true; d.add(c); return m; };
+    const blob = (mat, x, y, z, sx, sy, sz, k) => fuzzy(ball(d, 1, mat, x, y, z, sx, sy, sz), k);
+    blob(fur, 0, 9, -8, 11.5, 9, 21);                         // 身體
+    blob(fur, 0, 10, -22, 11.5, 8.6, 9);                      // 臀部
+    blob(fur, 0, 12, 8, 10.5, 11, 10);                        // 挺起的胸口與肩膀
+    blob(fur, 0, 16.5, 12.5, 7.6, 8, 7);                      // 脖子
+    blob(fur, 0, 20.6, 17, 8.4, 7.3, 8.6, 1.04);              // 頭
+    blob(fur, 0, 23.6, 19.5, 5.6, 3.2, 4.6, 1.06);            // 眉骨
+    blob(fur, 0, 19.4, 25.4, 5.1, 3.5, 6.3, 1.04);            // 寬口鼻
+    ball(d, 1, black, 0, 20.4, 31.4, 2.4, 1.9, 1.6);          // 鼻頭
+    const jaw = blob(fur, 0, 15.2, 23.2, 4.3, 1.9, 5.2, 1.04); jaw.rotation.x = 0.32; // 張開的下顎
+    const inner = ball(d, 1, mouth, 0, 16.6, 23.6, 3.6, 1.2, 4.6); inner.rotation.x = 0.2;
+    const tg = ball(d, 1, tongue, 0, 16.2, 26.6, 2.5, 0.75, 4.8); tg.rotation.x = 0.36; // 舌頭
     for (const sx of [-1, 1]) {
-      ball(g, 1.3, black, sx * 4.1, 17.3, 27.4);              // 眼睛
-      ball(g, 0.35, S('#ffffff', { roughness: 0.2 }), sx * 4.4, 17.9, 28.5);
-      tube(g, [[sx * 2.4, 19.6, 26.6], [sx * 4.3, 20, 26.6], [sx * 6, 19.2, 25.6]], 0.3, ear, 6); // 眉
-      const e = blob(ear, sx * 9.6, 11.2, 18.4, 2.5, 8.8, 6, 1.1); // 長垂耳
-      e.rotation.z = sx * 0.34; e.rotation.x = -0.12;
-      const fl = fuzzy(add(g, new THREE.CapsuleGeometry(3.5, 15, 6, 12), fur, sx * 7.6, 3.6, 22)); // 前腳向前伸
-      fl.rotation.x = Math.PI / 2; fl.rotation.z = sx * 0.1;
-      blob(light, sx * 8.4, 3.4, 32, 4.1, 3.4, 4.6, 1.05);
-      const hl = fuzzy(add(g, new THREE.CapsuleGeometry(3.9, 15, 6, 12), fur, sx * 9.5, 3.9, -27)); // 後腳向後伸直
-      hl.rotation.x = Math.PI / 2; hl.rotation.z = -sx * 0.22;
-      blob(light, sx * 11.8, 3.3, -36.6, 3.8, 3.2, 4.6, 1.05);
-      blob(fur, sx * 9.6, 6.4, -17, 6, 6, 8.5);               // 大腿
+      ball(d, 1.05, black, sx * 3.7, 22.6, 23.9);
+      ball(d, 0.3, S('#ffffff', { roughness: 0.2 }), sx * 3.95, 23.1, 24.8);
+      const e = blob(shade, sx * 8.7, 18.4, 15.4, 2.3, 7.4, 5.2, 1.07); e.rotation.z = sx * 0.26; e.rotation.x = -0.1; // 垂耳
+      const fl = fuzzy(add(d, new THREE.CapsuleGeometry(4.1, 15, 6, 14), fur, sx * 7.8, 4.3, 20)); fl.rotation.x = Math.PI / 2; fl.rotation.z = sx * 0.06;
+      blob(fur, sx * 8.2, 4.5, 30.6, 4.8, 4.5, 4.8, 1.04);    // 前腳掌
+      const p1 = ball(d, 1, pad, sx * 8.2, 4.3, 34.6, 3.3, 3.1, 1.3); void p1; // 肉墊
+      blob(fur, sx * 10.2, 7, -21, 6.6, 6.6, 9.4);            // 大腿
+      const hl = fuzzy(add(d, new THREE.CapsuleGeometry(3.7, 9, 6, 12), fur, sx * 13, 3.9, -29.5)); hl.rotation.x = Math.PI / 2; hl.rotation.z = -sx * 0.4;
+      blob(fur, sx * 15, 3.9, -35, 4.1, 3.8, 4.2, 1.04);      // 後腳掌
+      const p2 = ball(d, 1, pad, sx * 15.6, 3.8, -38.2, 2.9, 2.8, 1.2); p2.rotation.y = -sx * 0.4;
     }
-    const tail = fuzzy(tube(g, [[0, 9.5, -27], [0, 6.2, -33], [0, 4.2, -39], [0, 3.6, -43]], 2.7, fur, 14), 1.14);
-    void tail;
-    blob(fur, 0, 3.6, -43.5, 2.8, 2.8, 3.2, 1.12);
-    g.scale.setScalar(70 / 80); // 鼻尖到尾端合計 70 cm
+    fuzzy(tube(d, [[0, 11, -27], [1, 9.5, -31.5], [3, 7.5, -35], [5.5, 6, -38]], 3, fur, 14), 1.1);
+    blob(fur, 5.5, 6, -38.2, 3.1, 3.1, 3.3, 1.08);
+    d.scale.setScalar(70 / 76.5); d.position.z = 2;
     return g;
   };
 
