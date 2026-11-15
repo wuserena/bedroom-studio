@@ -13,6 +13,7 @@ export function roomMaterials(tx) {
     ceiling: S({ color: '#f6f1e6', roughness: 0.95 }),
     floor: S({ color: '#ffffff', map: tx.tile, roughness: 0.16, metalness: 0.0, envMapIntensity: 1.1 }),
     base: S({ color: '#4c2119', roughness: 0.45 }),
+    slab: S({ color: '#cfc7b9', roughness: 0.9 }),
     wood: S({ color: '#ffffff', map: tx.woodCm, roughness: 0.5 }),
     woodDark: S({ color: '#b97a3c', map: tx.woodCm, roughness: 0.55 }),
     frame: S({ color: '#2a2b2d', roughness: 0.45, metalness: 0.35 }),
@@ -23,6 +24,7 @@ export function roomMaterials(tx) {
     grille: S({ color: '#8f9294', roughness: 0.5, metalness: 0.4 }),
     fixture: S({ color: '#fbf8f0', roughness: 0.5, emissive: '#ffe9c4', emissiveIntensity: 0 }),
     ghost: new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }),
+    sky: new THREE.MeshBasicMaterial({ map: tx.sky, toneMapped: false, fog: false }),
   };
 }
 
@@ -54,7 +56,7 @@ export function buildRoom(r, mats, quality) {
     m.material.side = THREE.DoubleSide;
     m.receiveShadow = true; m.name = 'floor';
     groups.fixed.add(m);
-    bx(groups.fixed, -T, W + T, -6, -0.3, -T, zd + T, mats.base, { cast: false });
+    bx(groups.fixed, -T, W + T, -6, -0.3, -T, zd + T, mats.slab, { cast: false });
   }
 
   // 大窗牆（z = 0）
@@ -171,7 +173,7 @@ export function buildRoom(r, mats, quality) {
       disc.position.set(x, H - 2.5, z);
       groups.ceiling.add(disc);
       const light = new THREE.PointLight('#ffe2b8', 0, 0, 2);
-      light.position.set(x, H - 16, z);
+      light.position.set(x, H - 30, z);
       light.castShadow = quality.pointShadows > i;
       light.shadow.mapSize.set(quality.pointMap, quality.pointMap);
       light.shadow.camera.near = 8; light.shadow.camera.far = 520;
@@ -239,6 +241,17 @@ export function buildRoom(r, mats, quality) {
     slab(zm, zm + 2, upper0 + 2.4, 205 * k, xw + 1.5);
   }
 
+  // 窗外景色（只在室內視角顯示）
+  const outside = new THREE.Group();
+  {
+    const big = new THREE.Mesh(new THREE.PlaneGeometry(1500, 620), mats.sky);
+    big.position.set(W / 2, 190, -420);
+    const side = new THREE.Mesh(new THREE.PlaneGeometry(1500, 620), mats.sky);
+    side.position.set(W + 420, 190, r.sWinZ + r.sWinW / 2); side.rotation.y = -Math.PI / 2;
+    outside.add(big, side);
+    root.add(outside);
+  }
+
   const ghostable = ['window', 'left', 'right', 'back', 'ceiling'];
   for (const name of ghostable) groups[name].traverse(o => { if (o.isMesh) o.userData.mat = o.material; });
   const setGhost = (name, on) => {
@@ -249,7 +262,7 @@ export function buildRoom(r, mats, quality) {
     return true;
   };
 
-  return { root, groups, doorPivot, swing, ceilingLights, setGhost };
+  return { root, groups, doorPivot, swing, ceilingLights, setGhost, outside };
 }
 
 function windowUnit(w, h, mats) {

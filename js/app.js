@@ -108,17 +108,18 @@ function main() {
     const night = state.ui.night, on = state.ui.ceilingOn;
     scene.background = new THREE.Color(night ? '#0e131b' : '#cdd9e4');
     scene.environmentIntensity = night ? (on ? 0.16 : 0.05) : 0.5;
-    hemi.intensity = night ? 0.05 : 0.62;
-    hemi.color.set(night ? '#5a6a8c' : '#e6eef7');
+    hemi.intensity = night ? (on ? 0.16 : 0.04) : 0.62;
+    hemi.color.set(night ? (on ? '#f3dfc2' : '#5a6a8c') : '#e6eef7');
     sun.intensity = night ? 0 : 3.4;
     sun.castShadow = !night;
     skyFill.intensity = night ? 0 : 2.6e4;
     sideFill.intensity = night ? 0 : 0.7e4;
     renderer.toneMappingExposure = night ? 1.05 : 0.95;
-    for (const cl of room3d.ceilingLights) { cl.light.intensity = on ? (night ? 6.2e4 : 2.2e4) : 0; cl.light.visible = on; }
+    for (const cl of room3d.ceilingLights) { cl.light.intensity = on ? (night ? 4.4e4 : 1.8e4) : 0; cl.light.visible = on; }
     mats.fixture.emissiveIntensity = on ? 2.4 : 0;
     mats.glass.color.set(night ? '#1c2634' : '#cfe4ee');
     mats.glass.opacity = night ? 0.55 : 0.16;
+    mats.sky.color.set(night ? '#10151f' : '#ffffff');
     $('#btnNight').textContent = night ? '🌙 晚上' : '☀️ 白天';
     $('#btnCeil').classList.toggle('off', !on);
     $('#btnCeil').textContent = on ? '💡 頂燈開' : '💡 頂燈關';
@@ -235,7 +236,7 @@ function main() {
     } else if (mode === 'inside') {
       cam.fp.pos.set((r.width - r.woodDepth) * 0.5, 150, r.depth * 0.68); cam.fp.yaw = Math.PI; cam.fp.pitch = -0.12; cam.fp.fov = 74;
     } else if (mode === 'door') {
-      cam.fp.pos.set(r.doorWidth * 0.55, 152, zd - 14); cam.fp.yaw = Math.PI - 0.32; cam.fp.pitch = -0.14; cam.fp.fov = 78;
+      cam.fp.pos.set(r.doorWidth * 0.74, 152, zd - 8); cam.fp.yaw = Math.atan2(r.width * 0.5 - cam.fp.pos.x, r.depth * 0.3 - cam.fp.pos.z); cam.fp.pitch = -0.16; cam.fp.fov = 80;
     } else if (mode === 'orbit') {
       cam.target.set(r.width / 2, 70, zd / 2);
       cam.radius = clamp(760 / Math.min(1, aspect * 1.15), 420, 1700);
@@ -277,6 +278,7 @@ function main() {
     room3d.setGhost('right', orbit && p.x > r.width);
     room3d.setGhost('back', orbit && p.z > r.depth);
     room3d.setGhost('ceiling', orbit || top);
+    room3d.outside.visible = !orbit && !top;
   }
   function resize() {
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));

@@ -14,7 +14,7 @@ export function createFurnitureFactory(tx) {
   const metal = (color = '#c9cdd0') => color === '#c9cdd0' || color === '#c2c7c9'
     ? S(color, { roughness: 0.22, metalness: 0.95 }) : S(color, { roughness: 0.38, metalness: 0.25 });
   const chrome = () => S('#d5d8da', { roughness: 0.14, metalness: 1 });
-  const mirrorMat = () => S('#e6ecee', { roughness: 0.03, metalness: 1, envMapIntensity: 1.5 });
+  const mirrorMat = () => S('#dfe6e8', { roughness: 0.04, metalness: 0.92, envMapIntensity: 1.6, emissive: '#ffffff', emissiveMap: tx.mirror, emissiveIntensity: 0.14 });
   const glow = (color = '#fff1d6') => S('#fbf6ea', { roughness: 0.6, emissive: color, emissiveIntensity: 0 });
 
   const add = (g, geo, mat, x = 0, y = 0, z = 0) => {
@@ -161,7 +161,19 @@ export function createFurnitureFactory(tx) {
       p.setXYZ(i, x, Math.max(y, 0), z + 3);
     }
     geo.computeVertexNormals();
-    add(g, geo, fabric(it.colors.body, { bumpScale: 1.6 }));
+    add(g, geo, fabric(it.colors.body, { bumpMap: tx.weaveFine, bumpScale: 0.45 }));
+    // 車縫線：沿著布片接縫的細滾邊
+    for (const a of [0.5, 2.6, 4.7]) {
+      const pts = [];
+      for (let k = 0; k <= 14; k++) {
+        const t = k / 14, pr = curve.getPoint(0.06 + t * 0.9), hy = pr.y / 77.5;
+        let x = pr.x * Math.cos(a) * 1.012, z = pr.x * Math.sin(a) * 1.012, y = pr.y;
+        const seat = sm(-12, 34, z) * sm(0.28, 0.75, hy);
+        y -= 26 * seat; z += -15 * hy * hy + 6 * seat + 3;
+        pts.push([x, Math.max(y, 0.4), z]);
+      }
+      tube(g, pts, 0.45, fabric(it.colors.body), 40);
+    }
     return g;
   };
 

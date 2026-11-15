@@ -121,6 +121,21 @@ for (const [i, name] of ['復古暖橘', '無印日系', '灰白北歐・金屬'
 await page.reload(); await page.waitForFunction(() => window.__studio); await page.waitForTimeout(500);
 assert.equal((await stateOf(page)).items.some(i => i.type === 'poles'), true);
 
+// 產品特寫
+await page.evaluate(() => window.__studio.loadState(null));
+await page.click('#views button[data-view=orbit]');
+const close = async (name, type, radius, theta, phi, h = 60) => {
+  await page.evaluate(([type, radius, theta, phi, h]) => { const s = window.__studio, it = s.state.items.find(i => i.type === type); const w = it.x != null ? it : s.M.childWorld(s.state, it); s.cam.target.set(w.x, h, w.z); s.cam.radius = radius; s.cam.theta = theta; s.cam.phi = phi; s.select(null); }, [type, radius, theta, phi, h]);
+  await shot(page, 'close-' + name);
+};
+await close('poles', 'poles', 330, 1.35, 1.25, 95);
+await close('bed', 'nordli', 380, -1.2, 0.95, 40);
+await close('beanbag', 'beanbag', 260, 0.5, 1.05, 40);
+await close('desk', 'desk120', 300, 1.2, 1.0, 70);
+await close('isjakt', 'isjakt', 330, 0.9, 1.2, 110);
+await close('dog', 'gosig', 130, -0.9, 1.0, 60);
+await close('wood', 'trolley', 520, -1.45, 1.2, 110);
+
 // ---- 手機（iPhone 尺寸、觸控）----
 const phone = await open({ ...devices['iPhone 13'], defaultBrowserType: undefined });
 await shot(phone, 'phone-orbit');

@@ -128,6 +128,25 @@ export function rugTexture(base) {
   return t;
 }
 
+function skyCanvas() { // 窗外：天空漸層與模糊的遠方樓房
+  return canvas(1024, 512, (g, w, h) => {
+    const r = rng(41), gr = g.createLinearGradient(0, 0, 0, h);
+    gr.addColorStop(0, '#a9c9ea'); gr.addColorStop(0.55, '#dbe8f3'); gr.addColorStop(0.75, '#eef1ee');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 9; i++) { const x = r() * w, y = 40 + r() * 150, rw = 90 + r() * 160; const c = g.createRadialGradient(x, y, 0, x, y, rw); c.addColorStop(0, 'rgba(255,255,255,0.75)'); c.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = c; g.fillRect(x - rw, y - rw * 0.5, rw * 2, rw); }
+    for (let layer = 0; layer < 2; layer++) {
+      let x = -20;
+      while (x < w) {
+        const bw = 40 + r() * 90, bh = 70 + r() * (layer ? 120 : 190), v = layer ? 196 + r() * 22 : 214 + r() * 18;
+        g.fillStyle = `rgb(${v},${v - 4},${v - 10})`; g.fillRect(x, h - bh - (layer ? 0 : 30), bw, bh + 40);
+        g.fillStyle = `rgba(120,130,140,${layer ? 0.28 : 0.14})`;
+        for (let yy = h - bh + 12 - (layer ? 0 : 30); yy < h - 8; yy += 16) for (let xx = x + 7; xx < x + bw - 8; xx += 13) g.fillRect(xx, yy, 6, 8);
+        x += bw + 4 + r() * 26;
+      }
+    }
+  });
+}
+
 export function makeTextures() {
   const wood = woodCanvas(), weave = weaveCanvas();
   return {
@@ -140,6 +159,12 @@ export function makeTextures() {
     weaveFine: tex(weave, { srgb: false, rx: 24, ry: 24 }),
     fur: tex(furCanvas(), { srgb: false, rx: 3, ry: 3 }),
     peg: tex(pegCanvas()),
+    mirror: tex(canvas(64, 256, (g, w, h) => { // 鏡面：模擬映出天花板、牆面與地板的柔和漸層
+      const gr = g.createLinearGradient(0, 0, w, h);
+      gr.addColorStop(0, '#fdf8ee'); gr.addColorStop(0.3, '#e9e1d2'); gr.addColorStop(0.62, '#cfc5b4'); gr.addColorStop(0.66, '#8a7a68'); gr.addColorStop(0.7, '#d8d2c6'); gr.addColorStop(1, '#f1ede4');
+      g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    })),
+    sky: tex(skyCanvas()),
   };
 }
 
